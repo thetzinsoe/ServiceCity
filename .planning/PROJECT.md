@@ -40,6 +40,16 @@ The app uses in-app notifications because email usage is low in Myanmar, and pho
 
 **Persona — Admin:** Runs a single AC service shop. Needs to see incoming bookings, accept/decline them, and schedule technician visits. Currently manages everything through phone calls and Facebook messages.
 
+## Design
+
+**Aesthetic:** Modern, clean, professional minimalist. Mobile-first, large tappable targets (min 48px).
+
+**Colors:** White (`#FFFFFF`) background, Facebook Blue (`#1877F2`) accent for CTAs/links/navbar, light gray (`#F0F2F5`) for card groupings.
+
+**Components:** Bootstrap 5 borderless cards with `shadow-sm`, no heavy outline boxes.
+
+_(Full guidelines: memory/ui-design-guidelines.md)_
+
 ## Constraints
 
 - **Tech Stack**: ASP.NET Core MVC (.NET 10) + Entity Framework Core + PostgreSQL (via Npgsql)
