@@ -19,9 +19,11 @@
 ---
 
 ### Phase 1: Project Scaffold + Database
+
 **Goal:** Solution compiles, database schema exists with all entities, Docker works end-to-end.
 **Mode:** mvp
 **Success Criteria**:
+
 1. `dotnet build` succeeds for all three projects (Web, Core, Data)
 2. EF Core initial migration creates all entity tables (Users, Bookings, ServiceCategories, Notifications)
 3. `docker compose up` starts both the app and PostgreSQL containers and the app connects to the DB
@@ -31,17 +33,23 @@
 **Depends on:** None
 **Blocks:** Phases 2–6
 **Plans:** 2 plans
-
 Plans:
+**Wave 1**
+
 - [ ] 01-01-PLAN.md — Core + Data projects, entity definitions, DbContext, migration, seed data
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 01-02-PLAN.md — Web wiring, Home page with service categories, Docker multi-project build
 
 ---
 
 ### Phase 2: Auth (Session)
+
 **Goal:** Admin can sign in and out. Phone numbers are validated and normalized for all user identity operations.
 **Mode:** mvp
 **Success Criteria**:
+
 1. Admin navigates to `/Auth/SignIn`, enters correct credentials, and is redirected to the admin dashboard (placeholder)
 2. Admin can sign out from any page and is redirected to the sign-in page
 3. Unauthenticated requests to `/Admin/*` redirect to the sign-in page
@@ -57,9 +65,11 @@ Plans:
 ---
 
 ### Phase 3: User Booking
+
 **Goal:** A user can select a service category, fill out a booking form with name/phone/address/description, pick a preferred date/time, and receive a reference number. They can look up their booking by phone number and see its status.
 **Mode:** mvp
 **Success Criteria**:
+
 1. User navigates to the booking form, selects a category from the dropdown, fills in all fields, selects a preferred date/time slot, and submits — receives a confirmation page with a unique SC-XXXXXXXX reference number
 2. User enters their phone number on the lookup page and sees a list of all their bookings (or "No bookings found" if none exist)
 3. User clicks a booking from the lookup results and sees the booking status page (status = Pending) with the booking details
@@ -75,9 +85,11 @@ Plans:
 ---
 
 ### Phase 4: Admin Dashboard
+
 **Goal:** Admin sees all bookings grouped by status on a dashboard and can click into any booking for full details.
 **Mode:** mvp
 **Success Criteria**:
+
 1. Admin navigates to `/Admin/Dashboard` and sees bookings grouped into sections (Pending, Accepted, In Progress, Completed, Declined) with the newest bookings first in each section
 2. Admin clicks on a booking and sees the full detail page showing all booking information (customer name, phone, address, category, description, preferred date/time, current status)
 3. Dashboard is usable on a mobile viewport — sections collapse into stacked cards on narrow screens
@@ -91,9 +103,11 @@ Plans:
 ---
 
 ### Phase 5: Admin Actions + Notifications
+
 **Goal:** Admin can accept bookings (with estimated arrival time), decline bookings (with reason), and mark them in-progress/completed. Users see a notification timeline with status badges when they check their booking.
 **Mode:** mvp
 **Success Criteria**:
+
 1. Admin clicks "Accept" on a pending booking, enters an estimated arrival date/time, and the booking status changes to Accepted. The user sees the acceptance with the estimated time on their status page.
 2. Admin clicks "Decline" on a pending booking, enters a required reason, and the booking status changes to Declined. The user sees the decline with the reason on their status page.
 3. Admin marks an accepted booking as "In Progress" and later as "Completed." Each status change appears on the user's status page.
@@ -110,9 +124,11 @@ Plans:
 ---
 
 ### Phase 6: Polish
+
 **Goal:** All pages pass mobile QA, meet accessibility standards, use Burmese formatting, and have security hardening complete.
 **Mode:** mvp
 **Success Criteria**:
+
 1. Every user-facing page renders without horizontal scroll at 360px viewport width; all content is readable and usable
 2. All buttons and form inputs measure at least 48px in height on mobile viewports
 3. Dates display in Burmese format (e.g., "၁၅ ဇွန် ၂၀၂၆" or DD/MM/YYYY with Burmese month names) and numbers use Myanmar formatting where appropriate
