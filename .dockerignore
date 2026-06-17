@@ -1,0 +1,16 @@
+**/.git
+**/.gitignore
+**/.claude
+**/.planning
+**/.vscode
+**/.vs
+**/bin
+**/obj
+**/node_modules
+**/Dockerfile
+**/.dockerignore
+**/docker-compose*.yml
+**/.env
+**/README.md
+**/spec.md
+**/*.slnx

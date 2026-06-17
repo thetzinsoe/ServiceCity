@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:17
+    container_name: servicecity-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: REDACTED
+      POSTGRES_DB: servicecity_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d servicecity_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: ServiceCity/Dockerfile
+    container_name: servicecity-app
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=servicecity_dev;Username=postgres;Password=REDACTED
+    ports:
+      - "5124:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
