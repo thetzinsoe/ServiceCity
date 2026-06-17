@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="ServiceCity/ServiceCity.csproj" />
+  <Project Path="ServiceCity.Core/ServiceCity.Core.csproj" />
+  <Project Path="ServiceCity.Data/ServiceCity.Data.csproj" />
 </Solution>
