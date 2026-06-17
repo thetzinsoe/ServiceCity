@@ -1,25 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ServiceCity.Data;
 using ServiceCity.Models;
 using System.Diagnostics;
 
-namespace ServiceCity.Controllers
+namespace ServiceCity.Controllers;
+
+public class HomeController(AppDbContext db) : Controller
 {
-    public class HomeController : Controller
+    public async Task<IActionResult> Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        var categories = await db.ServiceCategories
+            .OrderBy(c => c.SortOrder)
+            .ToListAsync();
+        return View(categories);
+    }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+    public IActionResult Privacy() => View();
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
