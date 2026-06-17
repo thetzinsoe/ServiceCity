@@ -9,7 +9,7 @@
 
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
-| 1 | Project Scaffold + Database | Solution compiles, DB schema exists, Docker works | — (foundation) | 4 |
+| 1 | Project Scaffold + Database | 1/2 | In Progress|  |
 | 2 | Auth (Session) | Admin sign-in, phone validation/normalization | ADMIN-01, CROS-04 | 5 |
 | 3 | User Booking | Booking form, reference number, phone lookup, status page | BOOK-01→06, CROS-05 | 5 |
 | 4 | Admin Dashboard | Bookings grouped by status, booking detail view | ADMIN-02, ADMIN-06 | 3 |
@@ -32,11 +32,11 @@
 **Requirements:** None (foundation — entities and schema for all future phases)
 **Depends on:** None
 **Blocks:** Phases 2–6
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Core + Data projects, entity definitions, DbContext, migration, seed data
+- [x] 01-01-PLAN.md — Core + Data projects, entity definitions, DbContext, migration, seed data
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
