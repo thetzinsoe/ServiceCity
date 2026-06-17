@@ -30,6 +30,11 @@
 **Requirements:** None (foundation — entities and schema for all future phases)
 **Depends on:** None
 **Blocks:** Phases 2–6
+**Plans:** 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Core + Data projects, entity definitions, DbContext, migration, seed data
+- [ ] 01-02-PLAN.md — Web wiring, Home page with service categories, Docker multi-project build
 
 ---
 
@@ -153,4 +158,4 @@ Phase 1 (Schema + DB)
 
 ---
 *Roadmap created: 2026-06-16*
-*Last updated: 2026-06-16 after initial creation*
+*Last updated: 2026-06-17 after Phase 1 planning*
