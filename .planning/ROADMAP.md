@@ -48,6 +48,7 @@ Plans:
 
 **Goal:** Admin can sign in and out. Phone numbers are validated and normalized for all user identity operations.
 **Mode:** mvp
+**Plans:** 2 plans
 **Success Criteria**:
 
 1. Admin navigates to `/Auth/SignIn`, enters correct credentials, and is redirected to the admin dashboard (placeholder)
@@ -60,7 +61,13 @@ Plans:
 **Depends on:** Phase 1 (entities + DB)
 **Blocks:** Phase 3 (booking requires user identity), Phase 4 (admin requires auth)
 
-**UI hint:** yes — SignIn page with phone+name form, admin sign-in form
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Admin account setup: User entity auth fields, migration, cookie auth services, Setup page with phone validation (CROS-04)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 02-02-PLAN.md — Admin sign-in/sign-out, Admin dashboard placeholder, route protection, conditional nav links (ADMIN-01)
 
 ---
 
