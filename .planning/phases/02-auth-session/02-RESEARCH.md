@@ -537,17 +537,13 @@ public async Task<IActionResult> SignOut()
 | A3 | The default `PasswordHasher<T>` ignores the `TUser user` parameter in its implementation | Common Pitfalls | LOW — confirmed by reviewing the API surface from Context7: the user parameter is passed but not used for computation in the default impl. |
 | A4 | EF Core auto-migration in Program.cs (`db.Database.Migrate()`) will pick up new User entity columns without manual intervention | Architecture Patterns | LOW — pattern was established and verified in Phase 1. EF Core migrations are additive by design. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **What happens if the admin forgets their password in v1?**
-   - What we know: No email, no password reset flow in v1 scope.
-   - What's unclear: Whether to provide a manual reset mechanism (e.g., delete the admin row in DB and re-run setup).
-   - Recommendation: Document a manual recovery procedure (delete admin row, re-run setup) in a README or admin guide. No code needed.
+1. **What happens if the admin forgets their password in v1?** RESOLVED
+   - Decision: Document a manual recovery procedure (delete the admin row in DB, re-run setup at `/Auth/Setup`) in a README or admin guide. No code changes needed in Phase 2.
 
-2. **Should phone validation be extracted to a shared service for Phase 3 reuse?**
-   - What we know: Phase 3 booking form also needs phone validation (CROS-04 applies to all phone inputs).
-   - What's unclear: Whether to create a `PhoneValidationService` now or inline it and extract later.
-   - Recommendation: Inline validation in AuthController for Phase 2 (follows existing pattern of no service layer). Extract to a shared service during Phase 3 when booking needs it. This avoids premature abstraction.
+2. **Should phone validation be extracted to a shared service for Phase 3 reuse?** RESOLVED
+   - Decision: Inline validation in AuthController for Phase 2 (follows existing pattern of no service layer). Extract to a shared service during Phase 3 when booking needs it. This avoids premature abstraction.
 
 ## Environment Availability
 
