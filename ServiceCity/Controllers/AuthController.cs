@@ -72,6 +72,54 @@ public class AuthController(AppDbContext db) : Controller
         return RedirectToAction("SignIn");
     }
 
+    [HttpGet]
+    public IActionResult SignIn()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SignIn(SignInViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        var user = await db.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
+        if (user == null || string.IsNullOrEmpty(user.PasswordHash))
+        {
+            ModelState.AddModelError(string.Empty, "Invalid username or password.");
+            return View(model);
+        }
+
+        var hasher = new PasswordHasher<User>();
+        var result = hasher.VerifyHashedPassword(user, user.PasswordHash, model.Password);
+        if (result == PasswordVerificationResult.Failed)
+        {
+            ModelState.AddModelError(string.Empty, "Invalid username or password.");
+            return View(model);
+        }
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.Username!),
+            new(ClaimTypes.Role, "Admin")
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+        return RedirectToAction("Dashboard", "Admin");
+    }
+
+    [HttpPost]
+    public new async Task<IActionResult> SignOut()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction("SignIn");
+    }
+
     private static (bool IsValid, string? Normalized, string? Error) ValidateAndNormalizePhone(string input)
     {
         var util = PhoneNumberUtil.GetInstance();
