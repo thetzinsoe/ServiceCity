@@ -10,7 +10,7 @@
 | # | Phase | Goal | Requirements | Success Criteria |
 |---|-------|------|--------------|------------------|
 | 1 | Project Scaffold + Database | 2/2 | Complete   | 2026-06-17 |
-| 2 | Auth (Session) | 1/2 | In Progress|  |
+| 2 | Auth (Session) | 2/2 | Complete   | 2026-06-19 |
 | 3 | User Booking | Booking form, reference number, phone lookup, status page | BOOK-01→06, CROS-05 | 5 |
 | 4 | Admin Dashboard | Bookings grouped by status, booking detail view | ADMIN-02, ADMIN-06 | 3 |
 | 5 | Admin Actions + Notifications | Accept/decline/complete lifecycle, notification timeline | ADMIN-03→05, BOOK-07→08, NOTF-01→03 | 6 |
@@ -48,7 +48,7 @@ Plans:
 
 **Goal:** Admin can sign in and out. Phone numbers are validated and normalized for all user identity operations.
 **Mode:** mvp
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 **Success Criteria**:
 
 1. Admin navigates to `/Auth/SignIn`, enters correct credentials, and is redirected to the admin dashboard (placeholder)
@@ -67,7 +67,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 02-02-PLAN.md — Admin sign-in/sign-out, Admin dashboard placeholder, route protection, conditional nav links (ADMIN-01)
+- [x] 02-02-PLAN.md — Admin sign-in/sign-out, Admin dashboard placeholder, route protection, conditional nav links (ADMIN-01)
 
 ---
 
