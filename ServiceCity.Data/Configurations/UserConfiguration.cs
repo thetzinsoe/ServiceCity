@@ -23,6 +23,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.PhoneNumberNormalized)
             .HasMaxLength(20);
 
+        builder.Property(u => u.Username)
+            .HasMaxLength(200);
+
+        builder.Property(u => u.PasswordHash);
+
         builder.HasIndex(u => u.PhoneNumber)
             .IsUnique(false);
 
