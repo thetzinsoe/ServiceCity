@@ -22,6 +22,7 @@ public class AuthController(AppDbContext db) : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Setup(SetupViewModel model)
     {
         var hasAdmin = await db.Users.AnyAsync(u => u.IsAdmin);
@@ -79,6 +80,7 @@ public class AuthController(AppDbContext db) : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> SignIn(SignInViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
@@ -117,6 +119,7 @@ public class AuthController(AppDbContext db) : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public new async Task<IActionResult> SignOut()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
