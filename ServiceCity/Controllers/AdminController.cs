@@ -11,12 +11,19 @@ namespace ServiceCity.Controllers;
 [Authorize]
 public class AdminController(AppDbContext db) : Controller
 {
-    public async Task<IActionResult> Dashboard(string? search)
+    public async Task<IActionResult> Dashboard(string? search, string? status)
     {
         var query = db.Bookings
             .Include(b => b.ServiceCategory)
             .AsQueryable();
 
+        // Status filter
+        if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<BookingStatus>(status, true, out var parsed))
+        {
+            query = query.Where(b => b.Status == parsed);
+        }
+
+        // Search filter
         if (!string.IsNullOrWhiteSpace(search))
         {
             var term = search.Trim();
@@ -34,6 +41,7 @@ public class AdminController(AppDbContext db) : Controller
         var model = new AdminDashboardViewModel
         {
             Search = search,
+            StatusFilter = status,
             GroupedBookings = bookings.GroupBy(b => b.Status)
                 .ToDictionary(g => g.Key, g => g.ToList()),
             Counts = bookings.GroupBy(b => b.Status)

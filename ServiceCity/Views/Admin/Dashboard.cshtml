@@ -12,14 +12,33 @@
     <span class="badge bg-primary fs-6">@total total · @pendingCount pending</span>
 </div>
 
+<div class="status-filter mb-3">
+    <div class="d-flex flex-wrap gap-2">
+        <a asp-action="Dashboard" asp-route-search="@Model.Search"
+           class="btn btn-sm @(Model.StatusFilter == null ? "btn-primary" : "btn-outline-secondary")">All</a>
+        <a asp-action="Dashboard" asp-route-status="Pending" asp-route-search="@Model.Search"
+           class="btn btn-sm @(Model.StatusFilter == "Pending" ? "btn-primary" : "btn-outline-secondary")">Pending</a>
+        <a asp-action="Dashboard" asp-route-status="InProgress" asp-route-search="@Model.Search"
+           class="btn btn-sm @(Model.StatusFilter == "InProgress" ? "btn-primary" : "btn-outline-secondary")">In Progress</a>
+        <a asp-action="Dashboard" asp-route-status="Completed" asp-route-search="@Model.Search"
+           class="btn btn-sm @(Model.StatusFilter == "Completed" ? "btn-primary" : "btn-outline-secondary")">Completed</a>
+        <a asp-action="Dashboard" asp-route-status="Declined" asp-route-search="@Model.Search"
+           class="btn btn-sm @(Model.StatusFilter == "Declined" ? "btn-primary" : "btn-outline-secondary")">Declined</a>
+    </div>
+</div>
+
 <form asp-action="Dashboard" method="get" class="mb-4">
+    @if (Model.StatusFilter != null)
+    {
+        <input type="hidden" name="status" value="@Model.StatusFilter" />
+    }
     <div class="input-group">
         <span class="input-group-text bg-white border-end-0">🔍</span>
         <input type="text" name="search" value="@Model.Search" class="form-control border-start-0"
                placeholder="Search by phone, reference number, or customer name…" />
         @if (!string.IsNullOrEmpty(Model.Search))
         {
-            <a asp-action="Dashboard" class="btn btn-outline-secondary">Clear</a>
+            <a asp-action="Dashboard" asp-route-status="@Model.StatusFilter" class="btn btn-outline-secondary">Clear</a>
         }
         <button type="submit" class="btn btn-primary px-3">Search</button>
     </div>
@@ -53,6 +72,13 @@
 
 @foreach (var status in statusOrder)
 {
+    // When a status filter is active, only show that status section
+    if (Model.StatusFilter != null)
+    {
+        var filterMatch = Enum.TryParse<ServiceCity.Core.Enums.BookingStatus>(Model.StatusFilter, true, out var parsedFilter);
+        if (!filterMatch || status != parsedFilter) { continue; }
+    }
+
     var count = Model.Counts.GetValueOrDefault(status, 0);
     var hasBookings = Model.GroupedBookings.TryGetValue(status, out var bookings) && bookings.Any();
     var style = statusStyles[status];
