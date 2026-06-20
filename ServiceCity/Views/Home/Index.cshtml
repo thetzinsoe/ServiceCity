@@ -3,12 +3,12 @@
     ViewData["Title"] = "ServiceCity";
 }
 
-<div class="text-center mb-4">
-    <h1 class="display-5 fw-bold">ServiceCity</h1>
-    <p class="lead text-muted">AC service booking — fast, simple, reliable.</p>
+<div class="hero text-center">
+    <h1 class="display-5 fw-bold mb-2">AC Service, Booked.</h1>
+    <p class="lead mb-0">Tell us what's wrong, pick a time, and we'll be there. No phone calls, no guesswork.</p>
 </div>
 
-<h2 class="h4 mb-3">Our Services</h2>
+<h2 class="h5 fw-bold mb-3">What do you need?</h2>
 
 @if (Model == null || !Model.Any())
 {
@@ -20,14 +20,27 @@ else
         @foreach (var category in Model)
         {
             <div class="col">
-                <div class="card shadow-sm h-100">
+                <div class="card h-100 service-card">
                     <div class="card-body">
+                        <div class="icon-circle">
+                            @(category.Name switch
+                            {
+                                "Repair" => "🔧",
+                                "Maintenance" => "🧹",
+                                "Installation" => "📦",
+                                "Gas Refill" => "❄️",
+                                _ => "🔩"
+                            })
+                        </div>
                         <h5 class="card-title">@category.Name</h5>
                         @if (!string.IsNullOrEmpty(category.Description))
                         {
                             <p class="card-text text-muted">@category.Description</p>
                         }
-                        <a asp-controller="Booking" asp-action="Create" asp-route-serviceCategoryId="@category.Id" class="btn btn-primary">Book Now</a>
+                        <a asp-controller="Booking" asp-action="Create" asp-route-serviceCategoryId="@category.Id"
+                           class="btn btn-primary px-4">
+                            Book Now
+                        </a>
                     </div>
                 </div>
             </div>
