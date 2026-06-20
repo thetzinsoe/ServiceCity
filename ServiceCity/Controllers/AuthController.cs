@@ -126,6 +126,61 @@ public class AuthController(AppDbContext db) : Controller
         return RedirectToAction("SignIn");
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Settings()
+    {
+        if (!User.Identity.IsAuthenticated) return RedirectToAction("SignIn");
+
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null || !int.TryParse(userIdClaim, out var userId))
+            return RedirectToAction("SignIn");
+
+        var user = await db.Users.FindAsync(userId);
+        if (user == null) return RedirectToAction("SignIn");
+
+        return View(new SettingsViewModel
+        {
+            Name = user.Name ?? "",
+            PhoneNumber = user.PhoneNumber
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Settings(SettingsViewModel model)
+    {
+        if (!User.Identity.IsAuthenticated) return RedirectToAction("SignIn");
+
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null || !int.TryParse(userIdClaim, out var userId))
+            return RedirectToAction("SignIn");
+
+        if (!ModelState.IsValid) return View(model);
+
+        var user = await db.Users.FindAsync(userId);
+        if (user == null) return RedirectToAction("SignIn");
+
+        string? normalizedPhone = null;
+        if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
+        {
+            var (isValid, normalized, error) = ValidateAndNormalizePhone(model.PhoneNumber);
+            if (!isValid)
+            {
+                ModelState.AddModelError("PhoneNumber", error!);
+                return View(model);
+            }
+            normalizedPhone = normalized;
+        }
+
+        user.Name = model.Name;
+        user.PhoneNumber = model.PhoneNumber ?? "";
+        user.PhoneNumberNormalized = normalizedPhone;
+        await db.SaveChangesAsync();
+
+        TempData["SuccessMessage"] = "Settings saved.";
+        return RedirectToAction("Settings");
+    }
+
     private static (bool IsValid, string? Normalized, string? Error) ValidateAndNormalizePhone(string input)
     {
         var util = PhoneNumberUtil.GetInstance();
