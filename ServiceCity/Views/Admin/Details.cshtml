@@ -27,21 +27,50 @@
             <div class="row g-3">
                 <div class="col-md-6">
                     <form asp-action="Accept" method="post">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@Model.Id" />
                         <label class="form-label">Estimated Arrival</label>
                         <input type="datetime-local" name="arrivalTime" class="form-control" required />
-                        <button type="submit" class="btn btn-success mt-2">Accept</button>
+                        <button type="submit" class="btn btn-success mt-2 w-100">Accept Booking</button>
                     </form>
                 </div>
                 <div class="col-md-6">
                     <form asp-action="Decline" method="post">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@Model.Id" />
-                        <label class="form-label">Reason</label>
-                        <textarea name="reason" class="form-control" required></textarea>
-                        <button type="submit" class="btn btn-danger mt-2">Decline</button>
+                        <label class="form-label">Decline Reason</label>
+                        <textarea name="reason" class="form-control" required placeholder="Reason for declining..."></textarea>
+                        <button type="submit" class="btn btn-danger mt-2 w-100">Decline Booking</button>
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
+}
+else if (Model.Status == ServiceCity.Core.Enums.BookingStatus.Accepted)
+{
+    <div class="card mt-3 border-primary">
+        <div class="card-body">
+            <h5 class="card-title">Admin Actions</h5>
+            <p>Estimated Arrival: <strong>@Model.EstimatedArrivalTime?.ToLocalTime().ToString("g")</strong></p>
+            <form asp-action="InProgress" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-primary w-100">Mark In Progress</button>
+            </form>
+        </div>
+    </div>
+}
+else if (Model.Status == ServiceCity.Core.Enums.BookingStatus.InProgress)
+{
+    <div class="card mt-3 border-warning">
+        <div class="card-body">
+            <h5 class="card-title">Admin Actions</h5>
+            <form asp-action="Complete" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-success w-100">Mark Complete</button>
+            </form>
         </div>
     </div>
 }
