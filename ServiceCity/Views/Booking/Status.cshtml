@@ -1,0 +1,19 @@
+@model ServiceCity.Core.Entities.Booking
+@{
+    ViewData["Title"] = "Booking Status";
+}
+
+<h2 class="h4 mb-4">Booking Status</h2>
+
+<partial name="_StatusPartial" model="Model" />
+
+<h3 class="h5 mt-4">Notifications</h3>
+<ul class="list-group">
+    @foreach (var notification in Model.Notifications.OrderByDescending(n => n.CreatedAt))
+    {
+        <li class="list-group-item">
+            <small class="text-muted">@notification.CreatedAt.ToLocalTime()</small><br />
+            @notification.Message
+        </li>
+    }
+</ul>

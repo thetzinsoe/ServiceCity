@@ -1,0 +1,13 @@
+@model ServiceCity.Core.Entities.Booking
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Booking Status: @Model.Status</h5>
+        <p><strong>Reference:</strong> @Model.ReferenceNumber</p>
+        <p><strong>Service:</strong> @Model.ServiceCategory.Name</p>
+        <p><strong>Customer:</strong> @Model.CustomerName</p>
+        <p><strong>Address:</strong> @Model.Address</p>
+        <p><strong>Preferred Date:</strong> @Model.PreferredDate.ToShortDateString()</p>
+        <p><strong>Time Slot:</strong> @Model.PreferredTimeSlot</p>
+    </div>
+</div>

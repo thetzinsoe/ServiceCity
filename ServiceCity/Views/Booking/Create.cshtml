@@ -1,0 +1,55 @@
+@model ServiceCity.Models.BookingViewModel
+@{
+    ViewData["Title"] = "Book Service";
+}
+
+<h2 class="h4 mb-4">Book Service</h2>
+
+<form id="bookingForm" asp-action="Create" method="post" class="row g-3">
+    <input type="hidden" asp-for="ServiceCategoryId" />
+
+    <div class="col-md-6">
+        <label asp-for="CustomerName" class="form-label">Full Name</label>
+        <input asp-for="CustomerName" class="form-control" required />
+        <span asp-validation-for="CustomerName" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="CustomerPhone" class="form-label">Phone Number</label>
+        <input asp-for="CustomerPhone" class="form-control" required placeholder="09xxxxxxxxx" />
+        <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Address" class="form-label">Service Address</label>
+        <textarea asp-for="Address" class="form-control" rows="2" required></textarea>
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="PreferredDate" class="form-label">Preferred Date</label>
+        <input asp-for="PreferredDate" class="form-control" type="date" required min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+        <span asp-validation-for="PreferredDate" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="PreferredTimeSlot" class="form-label">Preferred Time Slot</label>
+        <select asp-for="PreferredTimeSlot" asp-items="Html.GetEnumSelectList<ServiceCity.Core.Enums.PreferredTimeSlot>()" class="form-select"></select>
+        <span asp-validation-for="PreferredTimeSlot" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="Description" class="form-label">Description (Optional)</label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Submit Booking</button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('bookingForm').addEventListener('submit', function() {
+            var btn = this.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.innerText = 'Submitting...';
+        });
+    </script>
+}

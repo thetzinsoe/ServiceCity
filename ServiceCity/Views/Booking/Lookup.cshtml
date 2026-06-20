@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Lookup Bookings";
+}
+
+<h2 class="h4 mb-4">Lookup Bookings</h2>
+
+<form asp-action="Lookup" method="post" class="row g-3">
+    <div class="col-md-6">
+        <label for="phoneNumber" class="form-label">Phone Number</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control" required placeholder="09xxxxxxxxx" />
+        <span class="text-danger">@ViewData.ModelState["phoneNumber"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Find Bookings</button>
+    </div>
+</form>
