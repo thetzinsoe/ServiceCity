@@ -173,3 +173,18 @@ body {
     padding: 1.75rem 1rem;
   }
 }
+
+/* ── Booking cards (admin dashboard) ── */
+.booking-card {
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  cursor: pointer;
+}
+.booking-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+
+/* ── Timeline ── */
+.timeline-item:last-child .vr {
+  display: none !important;
+}
