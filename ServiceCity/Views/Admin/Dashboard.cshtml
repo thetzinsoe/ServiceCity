@@ -1,32 +1,114 @@
-@model Dictionary<ServiceCity.Core.Enums.BookingStatus, List<ServiceCity.Core.Entities.Booking>>
+@model ServiceCity.Models.AdminDashboardViewModel
 @{
-    ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Bookings";
 }
 
-<h2 class="h4 mb-4">Admin Dashboard</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 fw-bold mb-0">Bookings</h2>
+    @{
+        var total = Model.Counts.Values.Sum();
+        var pendingCount = Model.Counts.GetValueOrDefault(ServiceCity.Core.Enums.BookingStatus.Pending, 0);
+    }
+    <span class="badge bg-primary fs-6">@total total · @pendingCount pending</span>
+</div>
 
-@foreach (var status in Enum.GetValues<ServiceCity.Core.Enums.BookingStatus>())
+<form asp-action="Dashboard" method="get" class="mb-4">
+    <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">🔍</span>
+        <input type="text" name="search" value="@Model.Search" class="form-control border-start-0"
+               placeholder="Search by phone, reference number, or customer name…" />
+        @if (!string.IsNullOrEmpty(Model.Search))
+        {
+            <a asp-action="Dashboard" class="btn btn-outline-secondary">Clear</a>
+        }
+        <button type="submit" class="btn btn-primary px-3">Search</button>
+    </div>
+</form>
+
+@{
+    var statusOrder = new[] {
+        ServiceCity.Core.Enums.BookingStatus.Pending,
+        ServiceCity.Core.Enums.BookingStatus.Accepted,
+        ServiceCity.Core.Enums.BookingStatus.InProgress,
+        ServiceCity.Core.Enums.BookingStatus.Completed,
+        ServiceCity.Core.Enums.BookingStatus.Declined
+    };
+    var statusStyles = new Dictionary<ServiceCity.Core.Enums.BookingStatus, (string bg, string text)>
+    {
+        [ServiceCity.Core.Enums.BookingStatus.Pending] = ("#fff3cd", "#856404"),
+        [ServiceCity.Core.Enums.BookingStatus.Accepted] = ("#cce5ff", "#004085"),
+        [ServiceCity.Core.Enums.BookingStatus.InProgress] = ("#fff3cd", "#856404"),
+        [ServiceCity.Core.Enums.BookingStatus.Completed] = ("#d4edda", "#155724"),
+        [ServiceCity.Core.Enums.BookingStatus.Declined] = ("#f8d7da", "#721c24"),
+    };
+    var statusIcons = new Dictionary<ServiceCity.Core.Enums.BookingStatus, string>
+    {
+        [ServiceCity.Core.Enums.BookingStatus.Pending] = "🟡",
+        [ServiceCity.Core.Enums.BookingStatus.Accepted] = "🔵",
+        [ServiceCity.Core.Enums.BookingStatus.InProgress] = "🟠",
+        [ServiceCity.Core.Enums.BookingStatus.Completed] = "🟢",
+        [ServiceCity.Core.Enums.BookingStatus.Declined] = "🔴",
+    };
+}
+
+@foreach (var status in statusOrder)
 {
-    <h3 class="h5 mt-4">@status</h3>
-    @if (Model.ContainsKey(status) && Model[status].Any())
-    {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-            @foreach (var booking in Model[status])
-            {
-                <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">@booking.ReferenceNumber</h5>
-                            <p class="card-text">@booking.ServiceCategory.Name</p>
-                            <a asp-action="Details" asp-route-id="@booking.Id" class="btn btn-sm btn-outline-primary">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            }
+    var count = Model.Counts.GetValueOrDefault(status, 0);
+    var hasBookings = Model.GroupedBookings.TryGetValue(status, out var bookings) && bookings.Any();
+    var style = statusStyles[status];
+
+    <!-- always show section header with count; collapse if empty unless it's Pending/Accepted -->
+    var showBody = hasBookings || status == ServiceCity.Core.Enums.BookingStatus.Pending || status == ServiceCity.Core.Enums.BookingStatus.Accepted;
+
+    <div class="status-section mb-4">
+        <div class="d-flex align-items-center mb-2">
+            <span class="fw-bold fs-5 me-2">@(statusIcons[status]) @status</span>
+            <span class="badge rounded-pill" style="background:@style.bg; color:@style.text;">@count</span>
         </div>
-    }
-    else
-    {
-        <p class="text-muted">No bookings with status @status.</p>
-    }
+        @if (hasBookings)
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                @foreach (var booking in bookings!)
+                {
+                    var isToday = booking.CreatedAt.Date == DateTime.UtcNow.Date;
+                    <div class="col">
+                        <a asp-action="Details" asp-route-id="@booking.Id" class="text-decoration-none">
+                            <div class="card booking-card h-100">
+                                @if (isToday)
+                                {
+                                    <span class="badge bg-danger position-absolute top-0 start-0 ms-2 mt-2" style="z-index:1;">New</span>
+                                }
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title fw-bold mb-0">@booking.CustomerName</h5>
+                                        <span class="badge rounded-pill" style="background:@style.bg; color:@style.text;">@booking.Status</span>
+                                    </div>
+                                    <p class="card-text text-muted small mb-1">@booking.ServiceCategory.Name</p>
+                                    <div class="d-flex gap-3 text-muted small">
+                                        <span>📅 @booking.PreferredDate.ToLocalTime().ToString("dd/MM")</span>
+                                        <span>🕐 @booking.PreferredTimeSlot</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted">@booking.ReferenceNumber</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+        else if (showBody)
+        {
+            <div class="text-muted small py-2">No bookings in this status.</div>
+        }
+    </div>
+}
+
+@if (!Model.GroupedBookings.Any() || !Model.GroupedBookings.Values.Any(b => b.Any()))
+{
+    <div class="text-center py-5">
+        <p class="text-muted fs-5">No bookings yet.</p>
+        <p class="text-muted small">Bookings will appear here when customers submit them.</p>
+    </div>
 }
