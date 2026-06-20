@@ -10,6 +10,9 @@ public class HomeController(AppDbContext db) : Controller
 {
     public async Task<IActionResult> Index()
     {
+        if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+            return RedirectToAction("Dashboard", "Admin");
+
         var categories = await db.ServiceCategories
             .OrderBy(c => c.SortOrder)
             .ToListAsync();

@@ -16,6 +16,12 @@ public class BookingController(AppDbContext db) : Controller
     [HttpGet]
     public async Task<IActionResult> Create(int serviceCategoryId)
     {
+        if (!User.Identity?.IsAuthenticated ?? true)
+        {
+            TempData["InfoMessage"] = "Sign in or create an account to book.";
+            return RedirectToAction("SignIn", "Auth");
+        }
+
         var category = await db.ServiceCategories.FindAsync(serviceCategoryId);
         if (category == null) return NotFound();
 

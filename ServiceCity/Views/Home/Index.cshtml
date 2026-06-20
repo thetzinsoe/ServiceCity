@@ -37,10 +37,20 @@ else
                         {
                             <p class="card-text text-muted">@category.Description</p>
                         }
-                        <a asp-controller="Booking" asp-action="Create" asp-route-serviceCategoryId="@category.Id"
-                           class="btn btn-primary px-4">
-                            Book Now
-                        </a>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a asp-controller="Booking" asp-action="Create" asp-route-serviceCategoryId="@category.Id"
+                               class="btn btn-primary px-4">
+                                Book Now
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Auth" asp-action="SignIn"
+                               class="btn btn-outline-primary px-4">
+                                Sign In to Book
+                            </a>
+                        }
                     </div>
                 </div>
             </div>
