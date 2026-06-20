@@ -69,6 +69,38 @@ public class AdminController(AppDbContext db) : Controller
         return RedirectToAction("Details", new { id });
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> InProgress(int id)
+    {
+        var booking = await db.Bookings.FindAsync(id);
+        if (booking == null || booking.Status != BookingStatus.Accepted) return NotFound();
+
+        booking.Status = BookingStatus.InProgress;
+        booking.UpdatedAt = DateTime.UtcNow;
+
+        AddNotification(booking, "Service in progress — technician is on site.");
+
+        await db.SaveChangesAsync();
+        return RedirectToAction("Details", new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Complete(int id)
+    {
+        var booking = await db.Bookings.FindAsync(id);
+        if (booking == null || booking.Status != BookingStatus.InProgress) return NotFound();
+
+        booking.Status = BookingStatus.Completed;
+        booking.UpdatedAt = DateTime.UtcNow;
+
+        AddNotification(booking, "Service completed. Thank you for choosing ServiceCity!");
+
+        await db.SaveChangesAsync();
+        return RedirectToAction("Details", new { id });
+    }
+
     private void AddNotification(Booking booking, string message)
     {
         db.Notifications.Add(new Notification
