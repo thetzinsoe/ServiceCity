@@ -13,7 +13,7 @@
         </div>
 
         <p><strong>Service:</strong> @Model.ServiceCategory.Name</p>
-        <p><strong>Preferred Date:</strong> @Model.PreferredDate.ToShortDateString()</p>
+        <p><strong>Preferred Date:</strong> @Model.PreferredDate.ToLocalTime().ToString("dd/MM/yyyy")</p>
         
         <a asp-action="Status" asp-route-referenceNumber="@Model.ReferenceNumber" class="btn btn-primary">Check Status</a>
     </div>

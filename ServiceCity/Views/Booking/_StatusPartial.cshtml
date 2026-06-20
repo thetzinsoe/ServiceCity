@@ -7,7 +7,7 @@
         <p><strong>Service:</strong> @Model.ServiceCategory.Name</p>
         <p><strong>Customer:</strong> @Model.CustomerName</p>
         <p><strong>Address:</strong> @Model.Address</p>
-        <p><strong>Preferred Date:</strong> @Model.PreferredDate.ToShortDateString()</p>
+        <p><strong>Preferred Date:</strong> @Model.PreferredDate.ToLocalTime().ToString("dd/MM/yyyy")</p>
         <p><strong>Time Slot:</strong> @Model.PreferredTimeSlot</p>
     </div>
 </div>

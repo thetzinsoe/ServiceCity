@@ -12,10 +12,10 @@
         <p><strong>Service:</strong> @Model.ServiceCategory.Name</p>
         <p><strong>Address:</strong> @Model.Address</p>
         <p><strong>Description:</strong> @(Model.Description ?? "N/A")</p>
-        <p><strong>Date:</strong> @Model.PreferredDate.ToShortDateString()</p>
+        <p><strong>Date:</strong> @Model.PreferredDate.ToLocalTime().ToString("dd/MM/yyyy")</p>
         <p><strong>Time Slot:</strong> @Model.PreferredTimeSlot</p>
         <p><strong>Status:</strong> @Model.Status</p>
-        <p><strong>Created:</strong> @Model.CreatedAt.ToLocalTime()</p>
+        <p><strong>Created:</strong> @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</p>
     </div>
 </div>
 

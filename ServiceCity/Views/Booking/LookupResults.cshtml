@@ -17,7 +17,7 @@ else
             <a asp-action="Status" asp-route-referenceNumber="@booking.ReferenceNumber" class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">@booking.ReferenceNumber</h5>
-                    <small>@booking.CreatedAt.ToShortDateString()</small>
+                    <small>@booking.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")</small>
                 </div>
                 <p class="mb-1">@booking.ServiceCategory.Name - @booking.Status</p>
             </a>
