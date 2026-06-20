@@ -27,6 +27,7 @@ else
                         {
                             <p class="card-text text-muted">@category.Description</p>
                         }
+                        <a asp-controller="Booking" asp-action="Create" asp-route-serviceCategoryId="@category.Id" class="btn btn-primary">Book Now</a>
                     </div>
                 </div>
             </div>
