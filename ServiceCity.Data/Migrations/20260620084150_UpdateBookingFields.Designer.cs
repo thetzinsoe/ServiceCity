@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ServiceCity.Data;
@@ -11,9 +12,11 @@ using ServiceCity.Data;
 namespace ServiceCity.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260620084150_UpdateBookingFields")]
+    partial class UpdateBookingFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,15 +56,9 @@ namespace ServiceCity.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
-                    b.Property<string>("DeclineReason")
-                        .HasColumnType("text");
-
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
-
-                    b.Property<DateTime?>("EstimatedArrivalTime")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("IdempotencyKey")
                         .IsRequired()
@@ -117,9 +114,6 @@ namespace ServiceCity.Data.Migrations
                     b.Property<int>("BookingId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("BookingId1")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -138,8 +132,6 @@ namespace ServiceCity.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookingId1");
 
                     b.HasIndex("BookingId", "CreatedAt")
                         .IsDescending(false, true);
@@ -265,16 +257,7 @@ namespace ServiceCity.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ServiceCity.Core.Entities.Booking", null)
-                        .WithMany("Notifications")
-                        .HasForeignKey("BookingId1");
-
                     b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("ServiceCity.Core.Entities.Booking", b =>
-                {
-                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }

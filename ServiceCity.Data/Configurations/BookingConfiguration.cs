@@ -20,6 +20,20 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
         builder.HasIndex(b => b.ReferenceNumber)
             .IsUnique();
 
+        builder.Property(b => b.CustomerName)
+            .IsRequired()
+            .HasMaxLength(200);
+
+        builder.Property(b => b.CustomerPhone)
+            .IsRequired()
+            .HasMaxLength(20);
+
+        builder.Property(b => b.CustomerPhoneNormalized)
+            .IsRequired()
+            .HasMaxLength(20);
+
+        builder.HasIndex(b => b.CustomerPhoneNormalized);
+
         builder.Property(b => b.Address)
             .IsRequired()
             .HasMaxLength(500);
@@ -33,10 +47,12 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
         builder.Property(b => b.PreferredTimeSlot)
             .HasConversion<int>();
 
-        builder.HasOne(b => b.User)
-            .WithMany()
-            .HasForeignKey(b => b.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+        builder.Property(b => b.IdempotencyKey)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.HasIndex(b => b.IdempotencyKey)
+            .IsUnique();
 
         builder.HasOne(b => b.ServiceCategory)
             .WithMany()
@@ -45,7 +61,5 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
 
         builder.HasIndex(b => new { b.Status, b.CreatedAt })
             .IsDescending(false, true);
-
-        builder.HasIndex(b => new { b.UserId, b.Status });
     }
 }
