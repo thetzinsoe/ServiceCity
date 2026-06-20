@@ -4,30 +4,50 @@ using Microsoft.EntityFrameworkCore;
 using ServiceCity.Core.Entities;
 using ServiceCity.Core.Enums;
 using ServiceCity.Data;
+using ServiceCity.Models;
 
 namespace ServiceCity.Controllers;
 
 [Authorize]
 public class AdminController(AppDbContext db) : Controller
 {
-    public async Task<IActionResult> Dashboard()
+    public async Task<IActionResult> Dashboard(string? search)
     {
-        var bookings = await db.Bookings
+        var query = db.Bookings
             .Include(b => b.ServiceCategory)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.Trim();
+            query = query.Where(b =>
+                b.ReferenceNumber.Contains(term) ||
+                b.CustomerPhone.Contains(term) ||
+                b.CustomerPhoneNormalized.Contains(term) ||
+                b.CustomerName.Contains(term));
+        }
+
+        var bookings = await query
             .OrderByDescending(b => b.CreatedAt)
             .ToListAsync();
 
-        var groupedBookings = bookings.GroupBy(b => b.Status)
-            .ToDictionary(g => g.Key, g => g.ToList());
+        var model = new AdminDashboardViewModel
+        {
+            Search = search,
+            GroupedBookings = bookings.GroupBy(b => b.Status)
+                .ToDictionary(g => g.Key, g => g.ToList()),
+            Counts = bookings.GroupBy(b => b.Status)
+                .ToDictionary(g => g.Key, g => g.Count())
+        };
 
-        return View(groupedBookings);
+        return View(model);
     }
 
     public async Task<IActionResult> Details(int id)
     {
         var booking = await db.Bookings
             .Include(b => b.ServiceCategory)
-            .Include(b => b.Notifications)
+            .Include(b => b.Notifications.OrderByDescending(n => n.CreatedAt))
             .FirstOrDefaultAsync(b => b.Id == id);
 
         if (booking == null) return NotFound();
@@ -46,8 +66,8 @@ public class AdminController(AppDbContext db) : Controller
         booking.EstimatedArrivalTime = DateTime.SpecifyKind(arrivalTime, DateTimeKind.Utc);
         booking.UpdatedAt = DateTime.UtcNow;
 
-        AddNotification(booking, $"Accepted - estimated arrival: {arrivalTime:g}");
-        
+        AddNotification(booking, "Booking accepted — technician will arrive at the estimated time.");
+
         await db.SaveChangesAsync();
         return RedirectToAction("Details", new { id });
     }
@@ -63,7 +83,7 @@ public class AdminController(AppDbContext db) : Controller
         booking.DeclineReason = reason;
         booking.UpdatedAt = DateTime.UtcNow;
 
-        AddNotification(booking, $"Declined - reason: {reason}");
+        AddNotification(booking, $"Booking declined — {reason}");
 
         await db.SaveChangesAsync();
         return RedirectToAction("Details", new { id });
