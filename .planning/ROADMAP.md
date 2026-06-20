@@ -89,6 +89,10 @@ Plans:
 
 **UI hint:** yes — Booking creation form, confirmation page, phone lookup page, booking status page
 
+**Wave 1**
+
+- [ ] 03-01-PLAN.md — User booking system: entity, controller, views, reference number, phone lookup, rate limiting
+
 ---
 
 ### Phase 4: Admin Dashboard
