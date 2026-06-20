@@ -1,5 +1,32 @@
+@model Dictionary<ServiceCity.Core.Enums.BookingStatus, List<ServiceCity.Core.Entities.Booking>>
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<h1>Admin Dashboard</h1>
+<h2 class="h4 mb-4">Admin Dashboard</h2>
+
+@foreach (var status in Enum.GetValues<ServiceCity.Core.Enums.BookingStatus>())
+{
+    <h3 class="h5 mt-4">@status</h3>
+    @if (Model.ContainsKey(status) && Model[status].Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+            @foreach (var booking in Model[status])
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@booking.ReferenceNumber</h5>
+                            <p class="card-text">@booking.ServiceCategory.Name</p>
+                            <a asp-action="Details" asp-route-id="@booking.Id" class="btn btn-sm btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">No bookings with status @status.</p>
+    }
+}
