@@ -15,6 +15,7 @@
 | 4 | Admin Dashboard | Bookings grouped by status, booking detail view | ADMIN-02, ADMIN-06 | 3 |
 | 5 | Admin Actions + Notifications | Accept/decline/complete lifecycle, notification timeline | ADMIN-03→05, BOOK-07→08, NOTF-01→03 | 6 |
 | 6 | Polish | Mobile responsiveness, tap targets, Burmese formatting, security | CROS-01→03, CROS-06 | 4 |
+| 7 | Customer Registration & Personalized Experience | Customer registration, role-aware home, My Bookings, admin customers | CUST-01 | 3 |
 
 ---
 
@@ -153,6 +154,38 @@ Plans:
 
 ---
 
+### Phase 7: Customer Registration & Personalized Experience
+
+**Goal:** Customers register, sign in, and see only their own bookings. Admin Home becomes the booking dashboard. Admin sees all customers with booking history. Search bar inline with status pills. Fix booking card badge overlap.
+**Mode:** mvp
+**Success Criteria**:
+
+1. Customer can navigate to `/Auth/Register`, fill in name/phone/address/password, and get signed in immediately
+2. Admin clicks "Home" in nav → sees booking dashboard (not service categories)
+3. Customer clicks "Home" in nav → sees service categories with "Book Now" buttons
+4. Guest (not signed in) clicks "Home" → sees service categories with "Sign In to Book" buttons
+5. Guest clicks "Book a Service" → redirected to SignIn page
+6. Signed-in customer clicks "My Bookings" → sees list of their own bookings (no phone input)
+7. Admin clicks "Customers" → sees list of all non-admin users, searchable, with booking counts
+8. Admin clicks a customer → sees customer details and their booking history
+9. Search bar appears inline with status pills on the same row on admin dashboard
+10. Booking card status badge no longer overlaps with customer name
+11. New bookings from signed-in customers are linked to their UserId
+12. "Check Status" nav item is removed; phone lookup page is inaccessible
+13. "All Bookings" nav item removed for admin (Home already shows it)
+
+**Requirements:** CUST-01
+**Depends on:** Phases 1–6 (all features must exist)
+**Blocks:** None
+
+**Plans:** 1/1 plans
+Plans:
+**Wave 1**
+
+- [ ] 07-01-PLAN.md — Customer registration, role-aware home, booking UserId FK, My Bookings, admin customers, nav updates, dashboard UI fixes
+
+---
+
 ## Requirement Coverage
 
 ```
@@ -177,6 +210,7 @@ Phase 1 (Schema + DB)
         │     ├─→ Phase 4 (Admin Dashboard)
         │     │     └─→ Phase 5 (Admin Actions + Notifications)
         │     │           └─→ Phase 6 (Polish)
+        │     │                 └─→ Phase 7 (Customer Registration)
         │     └─→ (booking data feeds Phase 4)
         └─→ (admin auth required for Phase 4)
 ```
@@ -185,4 +219,4 @@ Phase 1 (Schema + DB)
 
 ---
 *Roadmap created: 2026-06-16*
-*Last updated: 2026-06-17 after Phase 1 planning*
+*Last updated: 2026-06-20 after Phase 7 planning*
