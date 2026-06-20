@@ -7,13 +7,28 @@
 
 <partial name="_StatusPartial" model="Model" />
 
-<h3 class="h5 mt-4">Notifications</h3>
-<ul class="list-group">
+<h3 class="h5 mt-4">Status Timeline</h3>
+<div class="list-group">
     @foreach (var notification in Model.Notifications.OrderByDescending(n => n.CreatedAt))
     {
-        <li class="list-group-item">
-            <small class="text-muted">@notification.CreatedAt.ToLocalTime()</small><br />
-            @notification.Message
-        </li>
+        <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between align-items-start">
+                <div>
+                    @if (notification.StatusTo != null)
+                    {
+                        <span class="badge bg-@(notification.StatusTo switch
+                        {
+                            ServiceCity.Core.Enums.BookingStatus.Accepted => "primary",
+                            ServiceCity.Core.Enums.BookingStatus.InProgress => "warning",
+                            ServiceCity.Core.Enums.BookingStatus.Completed => "success",
+                            ServiceCity.Core.Enums.BookingStatus.Declined => "danger",
+                            _ => "secondary"
+                        }) me-2">@notification.StatusTo</span>
+                    }
+                    @notification.Message
+                </div>
+                <small class="text-muted text-nowrap ms-3">@notification.CreatedAt.ToLocalTime().ToString("g")</small>
+            </div>
+        </div>
     }
-</ul>
+</div>

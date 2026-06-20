@@ -70,6 +70,13 @@ public class BookingController(AppDbContext db) : Controller
         };
 
         db.Bookings.Add(booking);
+        db.Notifications.Add(new Notification
+        {
+            Booking = booking,
+            Message = "Booking created — your request has been received.",
+            StatusTo = BookingStatus.Pending,
+            CreatedAt = DateTime.UtcNow
+        });
         await db.SaveChangesAsync();
 
         return RedirectToAction("Confirmation", new { referenceNumber });
