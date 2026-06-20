@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Executing Phase 01
-stopped_at: Phase 02 context gathered
-last_updated: "2026-06-19T17:50:51.101Z"
+status: Planning Phase 03
+stopped_at: Phase 02 functionally complete, Phase 3 planning next
+last_updated: "2026-06-20T00:00:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 4
-  completed_plans: 2
-  percent: 17
+  completed_plans: 4
+  percent: 28
 ---
 
 # ServiceCity — Project State
@@ -28,20 +28,20 @@ See: .planning/PROJECT.md (updated 2026-06-16)
 
 | Phase | Name | Status | Plans | Progress |
 |-------|------|--------|-------|----------|
-| 1 | Project Scaffold + Database | ◆ In Progress | 0/3 | 0% |
-| 2 | Auth (Session) | ○ Pending | 0/3 | 0% |
-| 3 | User Booking | ○ Pending | 0/5 | 0% |
-| 4 | Admin Dashboard | ○ Pending | 0/3 | 0% |
-| 5 | Admin Actions + Notifications | ○ Pending | 0/5 | 0% |
-| 6 | Polish | ○ Pending | 0/3 | 0% |
+| 1 | Project Scaffold + Database | ◆ Complete | 2/2 | 100% |
+| 2 | Auth (Session) | ◇ Verify | 2/2 | 90% |
+| 3 | User Booking | ○ Pending | 0/? | 0% |
+| 4 | Admin Dashboard | ○ Pending | 0/? | 0% |
+| 5 | Admin Actions + Notifications | ○ Pending | 0/? | 0% |
+| 6 | Polish | ○ Pending | 0/? | 0% |
 
 ## Recent Activity
 
-- 2026-06-16: Project initialized via `/gsd-new-project --auto`
-- 2026-06-16: Research completed (stack, features, architecture, pitfalls)
-- 2026-06-16: Requirements defined (23 v1 requirements across 4 categories)
-- 2026-06-16: Roadmap created (6 phases, 100% requirement coverage)
-- 2026-06-16: UI design guidelines saved (mobile-first, Facebook Blue accent, Bootstrap 5 shadow-sm cards)
+- 2026-06-19: Phase 02 Wave 2 complete — AdminController, SignIn/SignOut, nav conditional links
+- 2026-06-19: Phase 02 code review — 4 critical, 6 warnings, 4 info findings
+- 2026-06-19: Phase 02 verification — 12/16 must-haves verified, 4 need human testing
+- 2026-06-19: Phase 02 UAT created — 4 manual tests pending
+- 2026-06-17: Phase 01 complete — scaffold, entities, Docker, seed data
 
 ## Design Reference
 
@@ -62,6 +62,6 @@ See memory: `ui-design-guidelines.md` — color palette (#FFFFFF, #1877F2, #F0F2
 
 ## Session
 
-**Last session:** 2026-06-18T22:28:09.395Z
-**Stopped at:** Phase 02 context gathered
-**Resume file:** .planning/phases/02-auth-session/02-CONTEXT.md
+**Last session:** 2026-06-20T00:00:00.000Z
+**Stopped at:** Phase 02 verify — CR fixes + human verification needed
+**Resume file:** .planning/phases/02-auth-session/02-VERIFICATION.md

@@ -101,9 +101,12 @@ public class AuthController(AppDbContext db) : Controller
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Username!),
-            new(ClaimTypes.Role, "Admin")
+            new(ClaimTypes.Name, user.Username ?? ""),
         };
+        if (user.IsAdmin)
+        {
+            claims.Add(new(ClaimTypes.Role, "Admin"));
+        }
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);
