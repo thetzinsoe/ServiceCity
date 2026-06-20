@@ -1,46 +1,90 @@
 @model ServiceCity.Core.Entities.Booking
 @{
-    ViewData["Title"] = "Booking Details - " + Model.ReferenceNumber;
+    ViewData["Title"] = Model.ReferenceNumber;
+
+    var statusStyle = Model.Status switch
+    {
+        ServiceCity.Core.Enums.BookingStatus.Pending => ("#fff3cd", "#856404", "Pending"),
+        ServiceCity.Core.Enums.BookingStatus.Accepted => ("#cce5ff", "#004085", "Accepted"),
+        ServiceCity.Core.Enums.BookingStatus.InProgress => ("#fff3cd", "#856404", "In Progress"),
+        ServiceCity.Core.Enums.BookingStatus.Completed => ("#d4edda", "#155724", "Completed"),
+        ServiceCity.Core.Enums.BookingStatus.Declined => ("#f8d7da", "#721c24", "Declined"),
+        _ => ("#e2e3e5", "#383d41", "Unknown")
+    };
 }
 
-<h2 class="h4 mb-4">Booking Details: @Model.ReferenceNumber</h2>
+<div class="mb-3">
+    <a asp-action="Dashboard" class="text-muted text-decoration-none small">&larr; Back to Bookings</a>
+</div>
 
-<div class="card">
-    <div class="card-body">
-        <p><strong>Customer Name:</strong> @Model.CustomerName</p>
-        <p><strong>Phone:</strong> @Model.CustomerPhone</p>
-        <p><strong>Service:</strong> @Model.ServiceCategory.Name</p>
-        <p><strong>Address:</strong> @Model.Address</p>
-        <p><strong>Description:</strong> @(Model.Description ?? "N/A")</p>
-        <p><strong>Date:</strong> @Model.PreferredDate.ToLocalTime().ToString("dd/MM/yyyy")</p>
-        <p><strong>Time Slot:</strong> @Model.PreferredTimeSlot</p>
-        <p><strong>Status:</strong> @Model.Status</p>
-        <p><strong>Created:</strong> @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</p>
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <h2 class="h4 fw-bold mb-2 mb-md-0">@Model.ReferenceNumber</h2>
+    <span class="badge fs-6 px-3 py-2 rounded-pill" style="background:@(statusStyle.Item1); color:@(statusStyle.Item2);">
+        @(statusStyle.Item3)
+    </span>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="text-muted small text-uppercase fw-bold mb-3">Customer</h6>
+                <p class="fw-bold fs-5 mb-1">@Model.CustomerName</p>
+                <p class="text-muted mb-1">📞 @Model.CustomerPhone</p>
+                <p class="text-muted mb-0">📍 @Model.Address</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="text-muted small text-uppercase fw-bold mb-3">Service</h6>
+                <p class="fw-bold mb-1">@(Model.ServiceCategory.Name switch
+                {
+                    "Repair" => "🔧 ",
+                    "Maintenance" => "🧹 ",
+                    "Installation" => "📦 ",
+                    "Gas Refill" => "❄️ ",
+                    _ => ""
+                })@Model.ServiceCategory.Name</p>
+                <p class="text-muted mb-1">📅 @Model.PreferredDate.ToLocalTime().ToString("dd/MM/yyyy") · 🕐 @Model.PreferredTimeSlot</p>
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <p class="text-muted mb-1">📝 @Model.Description</p>
+                }
+                <p class="text-muted small mb-0">Created @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</p>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Admin Actions -->
 @if (Model.Status == ServiceCity.Core.Enums.BookingStatus.Pending)
 {
-    <div class="card mt-3">
+    <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Admin Actions</h5>
+            <h6 class="text-muted small text-uppercase fw-bold mb-3">Actions</h6>
             <div class="row g-3">
-                <div class="col-md-6">
+                <div class="col-md-7">
                     <form asp-action="Accept" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@Model.Id" />
-                        <label class="form-label">Estimated Arrival</label>
-                        <input type="datetime-local" name="arrivalTime" class="form-control" required />
-                        <button type="submit" class="btn btn-success mt-2 w-100">Accept Booking</button>
+                        <label class="form-label fw-bold small">Estimated Arrival Time</label>
+                        <div class="input-group">
+                            <input type="datetime-local" name="arrivalTime" class="form-control" required />
+                            <button type="submit" class="btn btn-success px-4">Accept</button>
+                        </div>
                     </form>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <form asp-action="Decline" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@Model.Id" />
-                        <label class="form-label">Decline Reason</label>
-                        <textarea name="reason" class="form-control" required placeholder="Reason for declining..."></textarea>
-                        <button type="submit" class="btn btn-danger mt-2 w-100">Decline Booking</button>
+                        <label class="form-label fw-bold small">Decline Reason</label>
+                        <div class="input-group">
+                            <input type="text" name="reason" class="form-control" required placeholder="Why?" />
+                            <button type="submit" class="btn btn-outline-danger">Decline</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -49,32 +93,72 @@
 }
 else if (Model.Status == ServiceCity.Core.Enums.BookingStatus.Accepted)
 {
-    <div class="card mt-3 border-primary">
-        <div class="card-body">
-            <h5 class="card-title">Admin Actions</h5>
-            <p>Estimated Arrival: <strong>@Model.EstimatedArrivalTime?.ToLocalTime().ToString("g")</strong></p>
+    <div class="card mb-4 border-primary">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="text-muted small text-uppercase fw-bold mb-1">Actions</h6>
+                <p class="mb-0">Arrival: <strong>@Model.EstimatedArrivalTime?.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</strong></p>
+            </div>
             <form asp-action="InProgress" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="btn btn-primary w-100">Mark In Progress</button>
+                <button type="submit" class="btn btn-warning px-4">Start Service</button>
             </form>
         </div>
     </div>
 }
 else if (Model.Status == ServiceCity.Core.Enums.BookingStatus.InProgress)
 {
-    <div class="card mt-3 border-warning">
-        <div class="card-body">
-            <h5 class="card-title">Admin Actions</h5>
+    <div class="card mb-4 border-warning">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="text-muted small text-uppercase fw-bold mb-1">Actions</h6>
+                <p class="mb-0">Technician is on site — mark complete when done.</p>
+            </div>
             <form asp-action="Complete" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="btn btn-success w-100">Mark Complete</button>
+                <button type="submit" class="btn btn-success px-4">Complete Job</button>
             </form>
         </div>
     </div>
 }
+else if (Model.Status == ServiceCity.Core.Enums.BookingStatus.Declined)
+{
+    <div class="card mb-4 border-danger bg-light">
+        <div class="card-body">
+            <h6 class="text-muted small text-uppercase fw-bold mb-1">Declined</h6>
+            <p class="mb-0 text-danger">@(Model.DeclineReason ?? "No reason provided.")</p>
+        </div>
+    </div>
+}
 
-<div class="mt-3">
-    <a asp-action="Dashboard" class="btn btn-primary">Back to Dashboard</a>
-</div>
+<!-- Timeline -->
+@if (Model.Notifications.Any())
+{
+    <h6 class="text-muted small text-uppercase fw-bold mb-3">Timeline</h6>
+    <div class="timeline">
+        @foreach (var n in Model.Notifications)
+        {
+            var dotColor = n.StatusTo switch
+            {
+                ServiceCity.Core.Enums.BookingStatus.Pending => "#ffc107",
+                ServiceCity.Core.Enums.BookingStatus.Accepted => "#1877F2",
+                ServiceCity.Core.Enums.BookingStatus.InProgress => "#fd7e14",
+                ServiceCity.Core.Enums.BookingStatus.Completed => "#28a745",
+                ServiceCity.Core.Enums.BookingStatus.Declined => "#dc3545",
+                _ => "#6c757d"
+            };
+            <div class="timeline-item d-flex mb-3">
+                <div class="me-3 d-flex flex-column align-items-center">
+                    <div class="rounded-circle" style="width:12px; height:12px; background:@dotColor;"></div>
+                    <div class="vr flex-grow-1 mt-1" style="display:@(n == Model.Notifications.Last() ? "none" : "block")"></div>
+                </div>
+                <div>
+                    <p class="mb-0 small">@n.Message</p>
+                    <small class="text-muted">@n.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</small>
+                </div>
+            </div>
+        }
+    </div>
+}
