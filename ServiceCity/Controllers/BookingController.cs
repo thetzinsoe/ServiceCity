@@ -6,6 +6,7 @@ using ServiceCity.Models;
 using ServiceCity.Core.Entities;
 using ServiceCity.Core.Enums;
 using PhoneNumbers;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -75,6 +76,15 @@ public class BookingController(AppDbContext db) : Controller
             CreatedAt = DateTime.UtcNow
         };
 
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim != null && int.TryParse(userIdClaim, out var userId))
+            {
+                booking.UserId = userId;
+            }
+        }
+
         db.Bookings.Add(booking);
         db.Notifications.Add(new Notification
         {
@@ -101,29 +111,36 @@ public class BookingController(AppDbContext db) : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> MyBookings()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null || !int.TryParse(userIdClaim, out var userId))
+            return RedirectToAction("SignIn", "Auth");
+
+        var bookings = await db.Bookings
+            .Include(b => b.ServiceCategory)
+            .Where(b => b.UserId == userId)
+            .OrderByDescending(b => b.CreatedAt)
+            .ToListAsync();
+
+        return View(bookings);
+    }
+
+    [HttpGet]
     public IActionResult Lookup()
     {
-        return View();
+        if (!User.Identity?.IsAuthenticated ?? true)
+            return RedirectToAction("SignIn", "Auth");
+        return RedirectToAction("MyBookings");
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Lookup(string phoneNumber)
+    public IActionResult Lookup(string phoneNumber)
     {
-        var (isValid, normalized, error) = ValidateAndNormalizePhone(phoneNumber);
-        if (!isValid)
-        {
-            ModelState.AddModelError("phoneNumber", error!);
-            return View();
-        }
-
-        var bookings = await db.Bookings
-            .Include(b => b.ServiceCategory)
-            .Where(b => b.CustomerPhoneNormalized == normalized)
-            .OrderByDescending(b => b.CreatedAt)
-            .ToListAsync();
-
-        return View("LookupResults", bookings);
+        if (!User.Identity?.IsAuthenticated ?? true)
+            return RedirectToAction("SignIn", "Auth");
+        return RedirectToAction("MyBookings");
     }
 
     [HttpGet]

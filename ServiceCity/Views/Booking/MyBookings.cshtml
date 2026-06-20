@@ -1,0 +1,66 @@
+@model List<ServiceCity.Core.Entities.Booking>
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 fw-bold mb-0">My Bookings</h2>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-sm">Book a Service</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card shadow-sm">
+        <div class="card-body text-center py-5">
+            <p class="text-muted fs-5 mb-2">You have no bookings yet.</p>
+            <p class="text-muted small mb-3">Book a service to get started.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Book a Service</a>
+        </div>
+    </div>
+}
+else
+{
+    var statusStyles = new Dictionary<ServiceCity.Core.Enums.BookingStatus, (string bg, string text)>
+    {
+        [ServiceCity.Core.Enums.BookingStatus.Pending] = ("#fff3cd", "#856404"),
+        [ServiceCity.Core.Enums.BookingStatus.Accepted] = ("#cce5ff", "#004085"),
+        [ServiceCity.Core.Enums.BookingStatus.InProgress] = ("#fff3cd", "#856404"),
+        [ServiceCity.Core.Enums.BookingStatus.Completed] = ("#d4edda", "#155724"),
+        [ServiceCity.Core.Enums.BookingStatus.Declined] = ("#f8d7da", "#721c24"),
+    };
+    var statusIcons = new Dictionary<ServiceCity.Core.Enums.BookingStatus, string>
+    {
+        [ServiceCity.Core.Enums.BookingStatus.Pending] = "🟡",
+        [ServiceCity.Core.Enums.BookingStatus.Accepted] = "🔵",
+        [ServiceCity.Core.Enums.BookingStatus.InProgress] = "🟠",
+        [ServiceCity.Core.Enums.BookingStatus.Completed] = "🟢",
+        [ServiceCity.Core.Enums.BookingStatus.Declined] = "🔴",
+    };
+
+    <div class="row row-cols-1 row-cols-md-2 g-3">
+        @foreach (var booking in Model)
+        {
+            var style = statusStyles.GetValueOrDefault(booking.Status, ("#e9ecef", "#383d41"));
+            var icon = statusIcons.GetValueOrDefault(booking.Status, "⚪");
+            var badgeBg = style.Item1;
+            var badgeText = style.Item2;
+            <div class="col">
+                <a asp-action="Status" asp-route-referenceNumber="@booking.ReferenceNumber" class="text-decoration-none">
+                    <div class="card booking-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title fw-bold mb-0">@booking.ServiceCategory?.Name</h5>
+                                <span class="badge rounded-pill" style="background:@badgeBg; color:@badgeText;">@icon @booking.Status</span>
+                            </div>
+                            <div class="d-flex gap-3 text-muted small mb-1">
+                                <span>@booking.PreferredDate.ToLocalTime().ToString("dd/MM")</span>
+                                <span>@booking.PreferredTimeSlot</span>
+                            </div>
+                            <small class="text-muted">@booking.ReferenceNumber</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}

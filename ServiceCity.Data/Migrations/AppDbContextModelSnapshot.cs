@@ -88,6 +88,9 @@ namespace ServiceCity.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerPhoneNormalized");
@@ -99,6 +102,8 @@ namespace ServiceCity.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("ServiceCategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("Status", "CreatedAt")
                         .IsDescending(false, true);
@@ -210,6 +215,10 @@ namespace ServiceCity.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -254,7 +263,13 @@ namespace ServiceCity.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ServiceCity.Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("ServiceCategory");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ServiceCity.Core.Entities.Notification", b =>
