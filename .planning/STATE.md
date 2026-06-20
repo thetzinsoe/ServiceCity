@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Planning Phase 03
-stopped_at: Phase 02 functionally complete, Phase 3 planning next
-last_updated: "2026-06-20T00:00:00.000Z"
+status: Phase 04 complete
+stopped_at: Phase 04 summary
+last_updated: "2026-06-20T15:55:00.000Z"
 progress:
   total_phases: 6
-  completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
-  percent: 28
+  completed_phases: 4
+  total_plans: 8
+  completed_plans: 7
+  percent: 67
 ---
 
 # ServiceCity — Project State
@@ -22,16 +22,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-16)
 
 **Core value:** Users can book AC service and know exactly when help is coming — no phone tag, no uncertainty.
-**Current focus:** Phase 02 — auth-session
+**Current focus:** Phase 04 — admin-dashboard
 
 ## Phase Status
 
 | Phase | Name | Status | Plans | Progress |
 |-------|------|--------|-------|----------|
 | 1 | Project Scaffold + Database | ◆ Complete | 2/2 | 100% |
-| 2 | Auth (Session) | ◇ Verify | 2/2 | 90% |
-| 3 | User Booking | ○ Pending | 0/? | 0% |
-| 4 | Admin Dashboard | ○ Pending | 0/? | 0% |
+| 2 | Auth (Session) | ◆ Complete | 2/2 | 100% |
+| 3 | User Booking | ◆ Complete | 1/1 | 100% |
+| 4 | Admin Dashboard | ◆ Complete | 1/1 | 100% |
 | 5 | Admin Actions + Notifications | ○ Pending | 0/? | 0% |
 | 6 | Polish | ○ Pending | 0/? | 0% |
 
