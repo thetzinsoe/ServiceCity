@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: v1.0 complete — all 6 phases finished
 stopped_at: Phase 06 summary
-last_updated: "2026-06-20T15:55:00.000Z"
+last_updated: "2026-06-20T18:02:06.000Z"
 progress:
   total_phases: 6
   completed_phases: 6
@@ -37,6 +37,7 @@ See: .planning/PROJECT.md (updated 2026-06-16)
 
 ## Recent Activity
 
+- 2026-06-20: Quick task 260620-ox6 complete — Remove Check Status nav, add All Bookings with status filter + search
 - 2026-06-19: Phase 02 Wave 2 complete — AdminController, SignIn/SignOut, nav conditional links
 - 2026-06-19: Phase 02 code review — 4 critical, 6 warnings, 4 info findings
 - 2026-06-19: Phase 02 verification — 12/16 must-haves verified, 4 need human testing
@@ -56,6 +57,12 @@ See memory: `ui-design-guidelines.md` — color palette (#FFFFFF, #1877F2, #F0F2
 | Phone-only identity, no email/password | Email usage <15% in Myanmar; phone is universal | — Pending |
 | In-app notifications via DB, no SignalR/WebSockets | Simpler, more resilient on spotty Myanmar mobile networks | — Pending |
 | Vertical MVP slices | Each phase delivers end-to-end user capability; faster feedback | — Pending |
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260620-ox6 | Remove Check Status nav menu, add All Booking List to home nav with status dropdown filter and customer name/phone search for admin dashboard | 2026-06-20 | 6827f93 | [260620-ox6-remove-check-status-nav-menu-add-all-boo](./quick/260620-ox6-remove-check-status-nav-menu-add-all-boo/) |
 
 ---
 *State initialized: 2026-06-16*
