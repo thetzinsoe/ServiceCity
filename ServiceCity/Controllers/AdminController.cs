@@ -5,6 +5,7 @@ using ServiceCity.Core.Entities;
 using ServiceCity.Core.Enums;
 using ServiceCity.Data;
 using ServiceCity.Models;
+using System.Security.Claims;
 
 namespace ServiceCity.Controllers;
 
@@ -127,6 +128,54 @@ public class AdminController(AppDbContext db) : Controller
 
         await db.SaveChangesAsync();
         return RedirectToAction("Details", new { id });
+    }
+
+    public async Task<IActionResult> Customers(string? search)
+    {
+        var query = db.Users.Where(u => !u.IsAdmin).AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.Trim();
+            query = query.Where(u =>
+                u.Name.Contains(term) ||
+                u.PhoneNumber.Contains(term) ||
+                (u.PhoneNumberNormalized != null && u.PhoneNumberNormalized.Contains(term)));
+        }
+
+        var customers = await query
+            .Select(u => new CustomerViewModel
+            {
+                Id = u.Id,
+                Name = u.Name,
+                PhoneNumber = u.PhoneNumber,
+                BookingCount = db.Bookings.Count(b => b.UserId == u.Id),
+                LastBooking = db.Bookings
+                    .Where(b => b.UserId == u.Id)
+                    .OrderByDescending(b => b.CreatedAt)
+                    .Select(b => (DateTime?)b.CreatedAt)
+                    .FirstOrDefault()
+            })
+            .OrderByDescending(c => c.BookingCount)
+            .ThenBy(c => c.Name)
+            .ToListAsync();
+
+        return View(customers);
+    }
+
+    public async Task<IActionResult> CustomerDetail(int id)
+    {
+        var user = await db.Users.FindAsync(id);
+        if (user == null || user.IsAdmin) return NotFound();
+
+        var bookings = await db.Bookings
+            .Include(b => b.ServiceCategory)
+            .Where(b => b.UserId == id)
+            .OrderByDescending(b => b.CreatedAt)
+            .ToListAsync();
+
+        ViewBag.Customer = user;
+        return View(bookings);
     }
 
     private void AddNotification(Booking booking, string message)
