@@ -22,4 +22,6 @@ public class Booking
     public List<Notification> Notifications { get; set; } = new();
     public DateTime? UpdatedAt { get; set; }
     public string IdempotencyKey { get; set; } = string.Empty;
+    public int? UserId { get; set; }
+    public User? User { get; set; }
 }
