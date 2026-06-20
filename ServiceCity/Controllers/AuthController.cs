@@ -115,7 +115,65 @@ public class AuthController(AppDbContext db) : Controller
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-        return RedirectToAction("Dashboard", "Admin");
+        if (user.IsAdmin)
+            return RedirectToAction("Dashboard", "Admin");
+        else
+            return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public IActionResult Register()
+    {
+        return View(new RegisterViewModel());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Register(RegisterViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        var (isValid, normalized, error) = ValidateAndNormalizePhone(model.PhoneNumber);
+        if (!isValid)
+        {
+            ModelState.AddModelError("PhoneNumber", error!);
+            return View(model);
+        }
+
+        if (await db.Users.AnyAsync(u => u.PhoneNumberNormalized == normalized))
+        {
+            ModelState.AddModelError("PhoneNumber", "An account with this phone number already exists.");
+            return View(model);
+        }
+
+        var hasher = new PasswordHasher<User>();
+        var user = new User
+        {
+            Name = model.Name,
+            PhoneNumber = model.PhoneNumber,
+            PhoneNumberNormalized = normalized,
+            Username = model.PhoneNumber,
+            PasswordHash = hasher.HashPassword(null!, model.Password),
+            Address = model.Address,
+            IsAdmin = false,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        db.Users.Add(user);
+        await db.SaveChangesAsync();
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.Name),
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpPost]

@@ -14,6 +14,13 @@
                     <div class="alert alert-success">@successMessage</div>
                 }
 
+                @if (TempData["InfoMessage"] is string infoMsg)
+                {
+                    <div class="alert alert-info border-0" style="background:#e7f0fd; color:#1877F2; border-radius:8px;">
+                        @infoMsg
+                    </div>
+                }
+
                 <form asp-action="SignIn" method="post">
                     @Html.AntiForgeryToken()
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
