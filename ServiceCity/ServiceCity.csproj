@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ServiceCity.Core\ServiceCity.Core.csproj" />
     <ProjectReference Include="..\ServiceCity.Data\ServiceCity.Data.csproj" />
+    <ProjectReference Include="..\ServiceCity.Services\ServiceCity.Services.csproj" />
   </ItemGroup>
 
 </Project>

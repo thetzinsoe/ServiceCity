@@ -11,4 +11,9 @@ public class User
     public string? PasswordHash { get; set; }
     public bool IsAdmin { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    // Lockout fields
+    public int FailedLoginAttempts { get; set; } = 0;
+    public DateTime? LockedUntil { get; set; }
+    public DateTime? LastFailedLoginAt { get; set; }
 }

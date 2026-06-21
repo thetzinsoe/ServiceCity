@@ -1,73 +1,44 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ServiceCity.Data;
-using ServiceCity.Models;
-using ServiceCity.Core.Entities;
-using PhoneNumbers;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using ServiceCity.Services.DTOs.Requests;
+using ServiceCity.Services.Interfaces;
 
 namespace ServiceCity.Controllers;
 
-public class AuthController(AppDbContext db) : Controller
+public class AuthController(IAuthService authService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Setup()
     {
-        var hasAdmin = await db.Users.AnyAsync(u => u.IsAdmin);
-        if (hasAdmin) return NotFound();
+        if (await authService.AdminExistsAsync())
+            return NotFound();
         return View();
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Setup(SetupViewModel model)
+    [EnableRateLimiting("AuthRegister")]
+    public async Task<IActionResult> Setup(SetupRequest model)
     {
-        var hasAdmin = await db.Users.AnyAsync(u => u.IsAdmin);
-        if (hasAdmin) return NotFound();
+        if (await authService.AdminExistsAsync())
+            return NotFound();
 
         if (!ModelState.IsValid) return View(model);
 
-        if (model.Password.Length < 6)
+        var (user, error) = await authService.SetupAsync(model);
+        if (error != null)
         {
-            ModelState.AddModelError("Password", "Password must be at least 6 characters.");
+            if (error.Contains("Password") && !error.Contains("Passwords"))
+                ModelState.AddModelError("Password", error);
+            else if (error.Contains("Passwords"))
+                ModelState.AddModelError("ConfirmPassword", error);
+            else
+                ModelState.AddModelError("PhoneNumber", error);
             return View(model);
         }
-
-        if (model.Password != model.ConfirmPassword)
-        {
-            ModelState.AddModelError("ConfirmPassword", "Passwords do not match.");
-            return View(model);
-        }
-
-        string? normalizedPhone = null;
-        if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
-        {
-            var (isValid, normalized, error) = ValidateAndNormalizePhone(model.PhoneNumber);
-            if (!isValid)
-            {
-                ModelState.AddModelError("PhoneNumber", error!);
-                return View(model);
-            }
-            normalizedPhone = normalized;
-        }
-
-        var hasher = new PasswordHasher<User>();
-        var user = new User
-        {
-            Username = model.Username,
-            PasswordHash = hasher.HashPassword(null!, model.Password),
-            Name = model.Name ?? model.Username,
-            PhoneNumber = model.PhoneNumber ?? "",
-            PhoneNumberNormalized = normalizedPhone,
-            IsAdmin = true,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        db.Users.Add(user);
-        await db.SaveChangesAsync();
 
         TempData["SuccessMessage"] = "Admin account created. Please sign in.";
         return RedirectToAction("SignIn");
@@ -81,96 +52,47 @@ public class AuthController(AppDbContext db) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SignIn(SignInViewModel model)
+    [EnableRateLimiting("AuthSignIn")]
+    public async Task<IActionResult> SignIn(SignInRequest model)
     {
         if (!ModelState.IsValid) return View(model);
 
-        var user = await db.Users.FirstOrDefaultAsync(u => u.Username == model.Username);
-        if (user == null || string.IsNullOrEmpty(user.PasswordHash))
+        var (user, error) = await authService.SignInAsync(model);
+        if (error != null)
         {
-            ModelState.AddModelError(string.Empty, "Invalid username or password.");
+            ModelState.AddModelError(string.Empty, error);
             return View(model);
         }
 
-        var hasher = new PasswordHasher<User>();
-        var result = hasher.VerifyHashedPassword(user, user.PasswordHash, model.Password);
-        if (result == PasswordVerificationResult.Failed)
-        {
-            ModelState.AddModelError(string.Empty, "Invalid username or password.");
-            return View(model);
-        }
-
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Username ?? ""),
-        };
-        if (user.IsAdmin)
-        {
-            claims.Add(new(ClaimTypes.Role, "Admin"));
-        }
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-
+        var principal = authService.CreatePrincipal(user!);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-        if (user.IsAdmin)
-            return RedirectToAction("Dashboard", "Admin");
-        else
-            return RedirectToAction("Index", "Home");
+        return user!.IsAdmin
+            ? RedirectToAction("Dashboard", "Admin")
+            : RedirectToAction("Index", "Home");
     }
 
     [HttpGet]
     public IActionResult Register()
     {
-        return View(new RegisterViewModel());
+        return View(new RegisterRequest());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Register(RegisterViewModel model)
+    [EnableRateLimiting("AuthRegister")]
+    public async Task<IActionResult> Register(RegisterRequest model)
     {
         if (!ModelState.IsValid) return View(model);
 
-        var (isValid, normalized, error) = ValidateAndNormalizePhone(model.PhoneNumber);
-        if (!isValid)
+        var (user, error) = await authService.RegisterAsync(model);
+        if (error != null)
         {
-            ModelState.AddModelError("PhoneNumber", error!);
+            ModelState.AddModelError("PhoneNumber", error);
             return View(model);
         }
 
-        if (await db.Users.AnyAsync(u => u.PhoneNumberNormalized == normalized))
-        {
-            ModelState.AddModelError("PhoneNumber", "An account with this phone number already exists.");
-            return View(model);
-        }
-
-        var hasher = new PasswordHasher<User>();
-        var user = new User
-        {
-            Name = model.Name,
-            PhoneNumber = model.PhoneNumber,
-            PhoneNumberNormalized = normalized,
-            Username = model.PhoneNumber,
-            PasswordHash = hasher.HashPassword(null!, model.Password),
-            Address = model.Address,
-            IsAdmin = false,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        db.Users.Add(user);
-        await db.SaveChangesAsync();
-
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Name),
-        };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-
+        var principal = authService.CreatePrincipal(user!);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
         return RedirectToAction("Index", "Home");
@@ -185,76 +107,46 @@ public class AuthController(AppDbContext db) : Controller
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> Settings()
     {
-        if (!User.Identity.IsAuthenticated) return RedirectToAction("SignIn");
+        var userId = GetUserId();
+        if (userId == null) return RedirectToAction("SignIn");
 
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdClaim == null || !int.TryParse(userIdClaim, out var userId))
-            return RedirectToAction("SignIn");
-
-        var user = await db.Users.FindAsync(userId);
+        var user = await authService.GetUserAsync(userId.Value);
         if (user == null) return RedirectToAction("SignIn");
 
-        return View(new SettingsViewModel
+        return View(new SettingsRequest
         {
-            Name = user.Name ?? "",
+            Name = user.Name,
             PhoneNumber = user.PhoneNumber
         });
     }
 
     [HttpPost]
+    [Authorize]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Settings(SettingsViewModel model)
+    public async Task<IActionResult> Settings(SettingsRequest model)
     {
-        if (!User.Identity.IsAuthenticated) return RedirectToAction("SignIn");
-
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdClaim == null || !int.TryParse(userIdClaim, out var userId))
-            return RedirectToAction("SignIn");
+        var userId = GetUserId();
+        if (userId == null) return RedirectToAction("SignIn");
 
         if (!ModelState.IsValid) return View(model);
 
-        var user = await db.Users.FindAsync(userId);
-        if (user == null) return RedirectToAction("SignIn");
-
-        string? normalizedPhone = null;
-        if (!string.IsNullOrWhiteSpace(model.PhoneNumber))
+        var (_, error) = await authService.UpdateSettingsAsync(userId.Value, model);
+        if (error != null)
         {
-            var (isValid, normalized, error) = ValidateAndNormalizePhone(model.PhoneNumber);
-            if (!isValid)
-            {
-                ModelState.AddModelError("PhoneNumber", error!);
-                return View(model);
-            }
-            normalizedPhone = normalized;
+            ModelState.AddModelError("PhoneNumber", error);
+            return View(model);
         }
-
-        user.Name = model.Name;
-        user.PhoneNumber = model.PhoneNumber ?? "";
-        user.PhoneNumberNormalized = normalizedPhone;
-        await db.SaveChangesAsync();
 
         TempData["SuccessMessage"] = "Settings saved.";
         return RedirectToAction("Settings");
     }
 
-    private static (bool IsValid, string? Normalized, string? Error) ValidateAndNormalizePhone(string input)
+    private int? GetUserId()
     {
-        var util = PhoneNumberUtil.GetInstance();
-        try
-        {
-            var number = util.Parse(input, "MM");
-            if (!util.IsValidNumber(number))
-            {
-                return (false, null, "Please enter a valid Myanmar phone number.");
-            }
-            var normalized = util.Format(number, PhoneNumberFormat.E164);
-            return (true, normalized, null);
-        }
-        catch (NumberParseException)
-        {
-            return (false, null, "Please enter a valid Myanmar phone number (e.g., 09-123-456-789 or +959123456789).");
-        }
+        var claim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        return claim != null && int.TryParse(claim, out var id) ? id : null;
     }
 }

@@ -1,21 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ServiceCity.Data;
+using ServiceCity.Data.Interfaces;
 using ServiceCity.Models;
-using System.Diagnostics;
 
 namespace ServiceCity.Controllers;
 
-public class HomeController(AppDbContext db) : Controller
+public class HomeController(IServiceCategoryRepository categoryRepo) : Controller
 {
     public async Task<IActionResult> Index()
     {
         if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
             return RedirectToAction("Dashboard", "Admin");
 
-        var categories = await db.ServiceCategories
-            .OrderBy(c => c.SortOrder)
-            .ToListAsync();
+        var categories = await categoryRepo.GetAllAsync();
         return View(categories);
     }
 
@@ -24,6 +20,6 @@ public class HomeController(AppDbContext db) : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View(new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
