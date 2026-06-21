@@ -1,34 +1,157 @@
 @model ServiceCity.Core.Entities.Booking
 @{
     ViewData["Title"] = "Booking Status";
+
+    var statusStyle = Model.Status switch
+    {
+        ServiceCity.Core.Enums.BookingStatus.Pending => ("#fff3cd", "#856404", "Pending"),
+        ServiceCity.Core.Enums.BookingStatus.Accepted => ("#cce5ff", "#004085", "Accepted"),
+        ServiceCity.Core.Enums.BookingStatus.InProgress => ("#fff3cd", "#856404", "In Progress"),
+        ServiceCity.Core.Enums.BookingStatus.Completed => ("#d4edda", "#155724", "Completed"),
+        ServiceCity.Core.Enums.BookingStatus.Declined => ("#f8d7da", "#721c24", "Declined"),
+        _ => ("#e2e3e5", "#383d41", "Unknown")
+    };
+
+    var statusIcon = Model.Status switch
+    {
+        ServiceCity.Core.Enums.BookingStatus.Pending => "🟡",
+        ServiceCity.Core.Enums.BookingStatus.Accepted => "🔵",
+        ServiceCity.Core.Enums.BookingStatus.InProgress => "🟠",
+        ServiceCity.Core.Enums.BookingStatus.Completed => "🟢",
+        ServiceCity.Core.Enums.BookingStatus.Declined => "🔴",
+        _ => "⚪"
+    };
+
+    var statusMessage = Model.Status switch
+    {
+        ServiceCity.Core.Enums.BookingStatus.Pending => "Your booking is being reviewed",
+        ServiceCity.Core.Enums.BookingStatus.Accepted => "Your booking has been accepted",
+        ServiceCity.Core.Enums.BookingStatus.InProgress => "Technician is on the way",
+        ServiceCity.Core.Enums.BookingStatus.Completed => "Service completed successfully",
+        ServiceCity.Core.Enums.BookingStatus.Declined => "Booking has been declined",
+        _ => ""
+    };
 }
 
-<h2 class="h4 mb-4">Booking Status</h2>
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <a asp-action="MyBookings" class="text-muted text-decoration-none small">← Back to My Bookings</a>
+}
 
-<partial name="_StatusPartial" model="Model" />
+<!-- Status Hero Banner -->
+<div class="card border-0 shadow-sm mb-4 mt-3" style="background:@statusStyle.Item1;">
+    <div class="card-body text-center py-4">
+        <div class="display-4 mb-2">@statusIcon</div>
+        <h2 class="h3 fw-bold mb-1" style="color:@statusStyle.Item2;">@statusStyle.Item3</h2>
+        <p class="mb-2" style="color:@statusStyle.Item2; opacity:0.8;">@statusMessage</p>
+        <span class="badge bg-white text-dark fs-6 px-3 py-2 rounded-pill shadow-sm">@Model.ReferenceNumber</span>
+    </div>
+</div>
 
-<h3 class="h5 mt-4">Status Timeline</h3>
-<div class="list-group">
-    @foreach (var notification in Model.Notifications.OrderByDescending(n => n.CreatedAt))
-    {
-        <div class="list-group-item">
-            <div class="d-flex w-100 justify-content-between align-items-start">
-                <div>
-                    @if (notification.StatusTo != null)
-                    {
-                        <span class="badge bg-@(notification.StatusTo switch
-                        {
-                            ServiceCity.Core.Enums.BookingStatus.Accepted => "primary",
-                            ServiceCity.Core.Enums.BookingStatus.InProgress => "warning",
-                            ServiceCity.Core.Enums.BookingStatus.Completed => "success",
-                            ServiceCity.Core.Enums.BookingStatus.Declined => "danger",
-                            _ => "secondary"
-                        }) me-2">@notification.StatusTo</span>
-                    }
-                    @notification.Message
-                </div>
-                <small class="text-muted text-nowrap ms-3">@notification.CreatedAt.ToLocalTime().ToString("g")</small>
+<!-- Detail Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="text-muted small text-uppercase fw-bold mb-3">Service Details</h6>
+                <p class="fw-bold mb-1">@(Model.ServiceCategory.Name switch
+                {
+                    "Repair" => "🔧 ",
+                    "Maintenance" => "🧹 ",
+                    "Installation" => "📦 ",
+                    "Gas Refill" => "❄️ ",
+                    _ => ""
+                })@Model.ServiceCategory.Name</p>
+                <p class="text-muted mb-1">📅 @Model.PreferredDate.ToLocalTime().ToString("dd/MM/yyyy") · 🕐 @Model.PreferredTimeSlot</p>
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <p class="text-muted mb-1">📝 @Model.Description</p>
+                }
+                <p class="text-muted small mb-0">Created @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</p>
             </div>
         </div>
-    }
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="text-muted small text-uppercase fw-bold mb-3">Your Information</h6>
+                <p class="fw-bold fs-5 mb-1">@Model.CustomerName</p>
+                <p class="text-muted mb-1">📞 @Model.CustomerPhone</p>
+                <p class="text-muted mb-0">📍 @Model.Address</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Status == ServiceCity.Core.Enums.BookingStatus.Accepted && Model.EstimatedArrivalTime != null)
+{
+    <div class="alert alert-primary d-flex align-items-center mb-4" role="alert">
+        <span class="me-2">📅</span>
+        <div>
+            <strong>Estimated Arrival:</strong> @Model.EstimatedArrivalTime?.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")
+        </div>
+    </div>
+}
+
+@if (Model.Status == ServiceCity.Core.Enums.BookingStatus.Declined && !string.IsNullOrEmpty(Model.DeclineReason))
+{
+    <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+        <span class="me-2">⚠️</span>
+        <div>
+            <strong>Reason:</strong> @Model.DeclineReason
+        </div>
+    </div>
+}
+
+<!-- Timeline -->
+@if (Model.Notifications.Any())
+{
+    <h6 class="text-muted small text-uppercase fw-bold mb-3">Status Timeline</h6>
+    <div class="card mb-4">
+        <div class="card-body">
+            @foreach (var n in Model.Notifications.OrderByDescending(n => n.CreatedAt))
+            {
+                var dotColor = n.StatusTo switch
+                {
+                    ServiceCity.Core.Enums.BookingStatus.Pending => "#ffc107",
+                    ServiceCity.Core.Enums.BookingStatus.Accepted => "#1877F2",
+                    ServiceCity.Core.Enums.BookingStatus.InProgress => "#fd7e14",
+                    ServiceCity.Core.Enums.BookingStatus.Completed => "#28a745",
+                    ServiceCity.Core.Enums.BookingStatus.Declined => "#dc3545",
+                    _ => "#6c757d"
+                };
+                var isLast = n == Model.Notifications.OrderByDescending(x => x.CreatedAt).Last();
+                <div class="d-flex @(isLast ? "" : "mb-3")">
+                    <div class="me-3 d-flex flex-column align-items-center">
+                        <div class="rounded-circle" style="width:12px; height:12px; background:@dotColor;"></div>
+                        @if (!isLast)
+                        {
+                            <div class="vr flex-grow-1 mt-1"></div>
+                        }
+                    </div>
+                    <div>
+                        @if (n.StatusTo != null)
+                        {
+                            <span class="badge bg-@(n.StatusTo switch
+                            {
+                                ServiceCity.Core.Enums.BookingStatus.Accepted => "primary",
+                                ServiceCity.Core.Enums.BookingStatus.InProgress => "warning",
+                                ServiceCity.Core.Enums.BookingStatus.Completed => "success",
+                                ServiceCity.Core.Enums.BookingStatus.Declined => "danger",
+                                _ => "secondary"
+                            }) me-1 small">@n.StatusTo</span>
+                        }
+                        <p class="mb-0 small">@n.Message</p>
+                        <small class="text-muted">@n.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<!-- CTA -->
+<div class="text-center py-3">
+    <p class="text-muted mb-3">Need another service?</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-4">Book Another Service</a>
 </div>

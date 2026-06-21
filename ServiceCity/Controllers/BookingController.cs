@@ -161,6 +161,7 @@ public class BookingController(AppDbContext db) : Controller
     {
         var booking = await db.Bookings
             .Include(b => b.ServiceCategory)
+            .Include(b => b.Notifications)
             .FirstOrDefaultAsync(b => b.ReferenceNumber == referenceNumber);
 
         if (booking == null) return NotFound();
