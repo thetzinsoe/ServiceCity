@@ -1,28 +1,28 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
+milestone: v1.1
 milestone_name: milestone
-status: v1.0 complete — all 6 phases finished
-stopped_at: Phase 06 summary
-last_updated: "2026-06-20T18:02:06.000Z"
+status: v1.1 active — Phase 7 complete
+stopped_at: Phase 07 summary
+last_updated: "2026-06-20T20:10:00.000Z"
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 8
-  completed_plans: 8
+  total_phases: 7
+  completed_phases: 7
+  total_plans: 9
+  completed_plans: 9
   percent: 100
 ---
 
 # ServiceCity — Project State
 
-**Last updated:** 2026-06-16
+**Last updated:** 2026-06-20
 
 ## Project Reference
 
 See: .planning/PROJECT.md (updated 2026-06-16)
 
 **Core value:** Users can book AC service and know exactly when help is coming — no phone tag, no uncertainty.
-**Current focus:** Phase 04 — admin-dashboard
+**Current focus:** Phase 07 — customer-registration (complete)
 
 ## Phase Status
 
@@ -34,9 +34,14 @@ See: .planning/PROJECT.md (updated 2026-06-16)
 | 4 | Admin Dashboard | ◆ Complete | 1/1 | 100% |
 | 5 | Admin Actions + Notifications | ◆ Complete | 1/1 | 100% |
 | 6 | Polish | ◆ Complete | 1/1 | 100% |
+| 7 | Customer Registration | ◆ Complete | 1/1 | 100% |
 
 ## Recent Activity
 
+- 2026-06-20: Phase 7 complete — Customer Registration & Personalized Experience (3 waves, 6 tasks, 7 commits)
+  - Wave 1: Booking.UserId FK + User.Address + Migration + Customer Registration
+  - Wave 2: Role-aware Home + Guest redirect + My Bookings + Lookup privacy hole closed
+  - Wave 3: Admin Customers page + Role-aware nav + Inline search+pills + Badge overlap fix
 - 2026-06-20: Quick task 260620-ox6 complete — Remove Check Status nav, add All Bookings with status filter + search
 - 2026-06-19: Phase 02 Wave 2 complete — AdminController, SignIn/SignOut, nav conditional links
 - 2026-06-19: Phase 02 code review — 4 critical, 6 warnings, 4 info findings
