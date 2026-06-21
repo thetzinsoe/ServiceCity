@@ -174,6 +174,37 @@ body {
   }
 }
 
+/* ── Status summary cards (admin dashboard) ── */
+.status-card {
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  cursor: pointer;
+  text-align: center;
+  padding: 1.25rem 0.75rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.status-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+  color: inherit;
+}
+.status-card .status-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+.status-card .status-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+.status-card .status-count {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
 /* ── Status filter pills ── */
 .status-filter .btn {
   border-radius: 20px;

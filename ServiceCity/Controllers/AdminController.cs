@@ -52,6 +52,38 @@ public class AdminController(AppDbContext db) : Controller
         return View(model);
     }
 
+    public async Task<IActionResult> Drilldown(string status, string? search)
+    {
+        if (string.IsNullOrWhiteSpace(status) || !Enum.TryParse<BookingStatus>(status, true, out var parsed))
+            return RedirectToAction("Dashboard");
+
+        var query = db.Bookings
+            .Include(b => b.ServiceCategory)
+            .Where(b => b.Status == parsed);
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.Trim();
+            query = query.Where(b =>
+                b.ReferenceNumber.Contains(term) ||
+                b.CustomerPhone.Contains(term) ||
+                b.CustomerPhoneNormalized.Contains(term) ||
+                b.CustomerName.Contains(term));
+        }
+
+        var bookings = await query.OrderByDescending(b => b.CreatedAt).ToListAsync();
+
+        var model = new AdminDashboardViewModel
+        {
+            Search = search,
+            StatusFilter = status,
+            GroupedBookings = new Dictionary<BookingStatus, List<Booking>> { [parsed] = bookings },
+            Counts = new Dictionary<BookingStatus, int> { [parsed] = bookings.Count }
+        };
+
+        return View(model);
+    }
+
     public async Task<IActionResult> Details(int id)
     {
         var booking = await db.Bookings

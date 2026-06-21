@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: milestone
-status: v1.1 active — Phase 7 complete
-stopped_at: Phase 08 context gathered
-last_updated: "2026-06-20T20:30:00.000Z"
+status: v1.1 active — Phase 8 complete
+stopped_at: Phase 08 complete
+last_updated: "2026-06-21T00:00:00.000Z"
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 9
-  completed_plans: 9
+  total_phases: 8
+  completed_phases: 8
+  total_plans: 10
+  completed_plans: 10
   percent: 100
 ---
 
@@ -35,9 +35,12 @@ See: .planning/PROJECT.md (updated 2026-06-16)
 | 5 | Admin Actions + Notifications | ◆ Complete | 1/1 | 100% |
 | 6 | Polish | ◆ Complete | 1/1 | 100% |
 | 7 | Customer Registration | ◆ Complete | 1/1 | 100% |
+| 8 | Booking Experience Polish | ◆ Complete | 2/2 | 100% |
 
 ## Recent Activity
 
+- 2026-06-21: Phase 8 complete — Booking Experience Polish (2 plans, 5 files, autofill + dashboard overhaul)
+- 2026-06-21: Phase 08 plan 01 complete — Booking Form Autofill (pre-fill name/phone/address from User entity)
 - 2026-06-20: Phase 7 complete — Customer Registration & Personalized Experience (3 waves, 6 tasks, 7 commits)
   - Wave 1: Booking.UserId FK + User.Address + Migration + Customer Registration
   - Wave 2: Role-aware Home + Guest redirect + My Bookings + Lookup privacy hole closed
@@ -74,6 +77,6 @@ See memory: `ui-design-guidelines.md` — color palette (#FFFFFF, #1877F2, #F0F2
 
 ## Session
 
-**Last session:** 2026-06-20T00:00:00.000Z
-**Stopped at:** Phase 02 verify — CR fixes + human verification needed
-**Resume file:** .planning/phases/02-auth-session/02-VERIFICATION.md
+**Last session:** 2026-06-21T00:00:00.000Z
+**Stopped at:** Phase 08 complete — all v1.1 phases done
+**Next action:** Commit changes, then decide on next milestone or wrap up

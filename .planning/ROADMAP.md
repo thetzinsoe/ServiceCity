@@ -16,6 +16,7 @@
 | 5 | Admin Actions + Notifications | Accept/decline/complete lifecycle, notification timeline | ADMIN-03→05, BOOK-07→08, NOTF-01→03 | 6 |
 | 6 | Polish | Mobile responsiveness, tap targets, Burmese formatting, security | CROS-01→03, CROS-06 | 4 |
 | 7 | Customer Registration & Personalized Experience | Customer registration, role-aware home, My Bookings, admin customers | CUST-01 | 3 |
+| 8 | Booking Experience Polish | Booking form autofill, admin dashboard status cards + drill-down | Complete | 2 |
 
 ---
 
@@ -183,6 +184,33 @@ Plans:
 **Wave 1**
 
 - [ ] 07-01-PLAN.md — Customer registration, role-aware home, booking UserId FK, My Bookings, admin customers, nav updates, dashboard UI fixes
+
+---
+
+### Phase 8: Booking Experience Polish
+
+**Goal:** Pre-fill booking form for registered customers. Replace admin dashboard status sections with summary cards + drill-down pages.
+**Mode:** mvp
+**Success Criteria**:
+
+1. Registered customer visiting Booking/Create sees name, phone, and address pre-filled from their account; all fields remain editable
+2. Admin dashboard shows 5 summary cards (Pending, Accepted, In Progress, Completed, Declined) with counts; clicking a card navigates to a per-status drill-down page
+3. Drill-down pages show booking card grid for a single status with search scoped to that status
+4. Drill-down pages have a back link to the dashboard
+
+**Requirements:** —
+**Depends on:** Phases 1–7
+**Blocks:** None
+
+**Plans:** 1/2 plans
+Plans:
+**Wave 1**
+
+- [x] 08-01-PLAN.md — Booking form autofill: pre-fill name/phone/address from authenticated user's account
+
+**Wave 2**
+
+- [x] 08-02-PLAN.md — Admin dashboard overhaul: 5 status summary cards + per-status drill-down pages
 
 ---
 

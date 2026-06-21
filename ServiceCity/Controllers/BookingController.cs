@@ -30,6 +30,19 @@ public class BookingController(AppDbContext db) : Controller
         {
             ServiceCategoryId = serviceCategoryId
         };
+
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim != null && int.TryParse(userIdClaim, out var userId))
+        {
+            var user = await db.Users.FindAsync(userId);
+            if (user != null)
+            {
+                model.CustomerName = user.Name;
+                model.CustomerPhone = user.PhoneNumber;
+                model.Address = user.Address;
+            }
+        }
+
         return View(model);
     }
 
