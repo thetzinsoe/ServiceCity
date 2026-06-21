@@ -6,6 +6,7 @@ WORKDIR /src
 COPY ServiceCity/ServiceCity.csproj ./ServiceCity/
 COPY ServiceCity.Core/ServiceCity.Core.csproj ./ServiceCity.Core/
 COPY ServiceCity.Data/ServiceCity.Data.csproj ./ServiceCity.Data/
+COPY ServiceCity.Services/ServiceCity.Services.csproj ./ServiceCity.Services/
 
 # Restore with explicit project reference resolution
 RUN dotnet restore ServiceCity/ServiceCity.csproj
@@ -14,6 +15,7 @@ RUN dotnet restore ServiceCity/ServiceCity.csproj
 COPY ServiceCity/ ./ServiceCity/
 COPY ServiceCity.Core/ ./ServiceCity.Core/
 COPY ServiceCity.Data/ ./ServiceCity.Data/
+COPY ServiceCity.Services/ ./ServiceCity.Services/
 
 # Publish
 RUN dotnet publish ServiceCity/ServiceCity.csproj -c Release -o /app/publish --no-restore
