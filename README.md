@@ -9,7 +9,7 @@
 ## 📱 Screenshots
 
 ![ServiceCity Home](screenshots/01-home.png)
-*Home page — book a service, track your booking*
+*Home page — browse services, book a service*
 
 ![Register](screenshots/02-register.png)
 *Customer registration with phone number*
@@ -17,8 +17,14 @@
 ![Sign In](screenshots/03-signin.png)
 *Phone number + password sign in*
 
-![Track Booking](screenshots/04-track.png)
-*Track your booking status in real-time*
+![Admin Dashboard](screenshots/04-admin-dashboard.png)
+*Admin dashboard — manage bookings by status*
+
+![Booking Confirmation](screenshots/05-confirmation.png)
+*Booking confirmed with reference number*
+
+![Status Timeline](screenshots/06-status-timeline.png)
+*Track booking status with visual timeline*
 
 ---
 
