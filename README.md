@@ -44,7 +44,7 @@
 ### Quick Start with Docker
 
 ```bash
-git clone [https://github.com/yourusername/ServiceCity.git](https://github.com/thetzinsoe/ServiceCity.git)
+git clone https://github.com/thetzinsoe/ServiceCity.git
 cd ServiceCity
 docker compose up --build
 ```
