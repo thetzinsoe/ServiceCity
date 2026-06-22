@@ -61,7 +61,7 @@ builder.Services.AddRateLimiter(options =>
     // Registration — prevent mass account creation
     options.AddFixedWindowLimiter("AuthRegister", opt =>
     {
-        opt.PermitLimit = 3;
+        opt.PermitLimit = 100;
         opt.Window = TimeSpan.FromMinutes(15);
         opt.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
         opt.QueueLimit = 0;
@@ -113,6 +113,12 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+}
+
+app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
 
 app.UseHttpsRedirection();
 app.UseRouting();

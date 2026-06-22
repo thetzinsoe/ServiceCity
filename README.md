@@ -26,8 +26,17 @@
 ![Status Timeline](screenshots/06-status-timeline.png)
 *Track booking status with visual timeline*
 
-![Error Page](screenshots/07-error.png)
-*Friendly error page when something goes wrong*
+![Error 404](screenshots/07-404.png)
+*404 — page not found, with helpful navigation*
+
+![Error 403](screenshots/08-403.png)
+*403 — access denied, sign-in prompt*
+
+![Error 500](screenshots/09-500.png)
+*500 — server error, request ID for debugging*
+
+![Error 503](screenshots/10-503.png)
+*503 — service unavailable, try again later*
 
 ---
 

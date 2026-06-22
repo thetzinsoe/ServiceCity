@@ -18,8 +18,13 @@ public class HomeController(IServiceCategoryRepository categoryRepo) : Controlle
     public IActionResult Privacy() => View();
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public IActionResult Error(int? statusCode = null)
     {
-        return View(new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        var code = statusCode ?? HttpContext.Response.StatusCode;
+        return View(new ErrorViewModel
+        {
+            RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+            StatusCode = code
+        });
     }
 }
