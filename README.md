@@ -26,6 +26,9 @@
 ![Status Timeline](screenshots/06-status-timeline.png)
 *Track booking status with visual timeline*
 
+![Error Page](screenshots/07-error.png)
+*Friendly error page when something goes wrong*
+
 ---
 
 ## ✨ Features

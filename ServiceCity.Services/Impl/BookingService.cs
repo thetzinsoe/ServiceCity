@@ -128,8 +128,8 @@ public class BookingService(
     private static string GenerateReferenceNumber()
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        var bytes = RandomNumberGenerator.GetBytes(10);
-        var suffix = new char[10];
+        var bytes = RandomNumberGenerator.GetBytes(8);
+        var suffix = new char[8];
         for (int i = 0; i < 10; i++)
             suffix[i] = chars[bytes[i] % chars.Length];
         return $"SC-{new string(suffix)}";
