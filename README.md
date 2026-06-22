@@ -6,6 +6,22 @@
 
 ---
 
+## 📱 Screenshots
+
+![ServiceCity Home](screenshots/01-home.png)
+*Home page — book a service, track your booking*
+
+![Register](screenshots/02-register.png)
+*Customer registration with phone number*
+
+![Sign In](screenshots/03-signin.png)
+*Phone number + password sign in*
+
+![Track Booking](screenshots/04-track.png)
+*Track your booking status in real-time*
+
+---
+
 ## ✨ Features
 
 | Feature | Description |
@@ -129,12 +145,6 @@ Customer                    System                      Admin
    │                          │◄── Complete ──────────────┤
    │◄─ Status update ──────── ┤                           │
 ```
-
----
-
-## 📱 Screenshots
-
-<!-- Add screenshots here -->
 
 ---
 
