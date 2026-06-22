@@ -44,7 +44,7 @@
 ### Quick Start with Docker
 
 ```bash
-git clone https://github.com/yourusername/ServiceCity.git
+git clone [https://github.com/yourusername/ServiceCity.git](https://github.com/thetzinsoe/ServiceCity.git)
 cd ServiceCity
 docker compose up --build
 ```
@@ -119,15 +119,15 @@ Customer                    System                      Admin
    ├─ Book a Service ────────►│                           │
    │                          ├─ Create booking ─────────►│
    │                          │  (SC-XXXXXXXX)            │
-   │◄─ Confirmation ─────────┤                           │
+   │◄─ Confirmation ───────── ┤                           │
    │                          │                           ├─ Review
    │                          │◄── Accept/Decline ────────┤
-   │◄─ Status update ────────┤                           │
+   │◄─ Status update ──────── ┤                           │
    │   (timeline notification)│                           │
    │                          │◄── Start Service ─────────┤
-   │◄─ Status update ────────┤                           │
+   │◄─ Status update ──────── ┤                           │
    │                          │◄── Complete ──────────────┤
-   │◄─ Status update ────────┤                           │
+   │◄─ Status update ──────── ┤                           │
 ```
 
 ---
