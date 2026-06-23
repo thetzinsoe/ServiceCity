@@ -38,6 +38,7 @@ public class BookingController(
             {
                 model.CustomerName = user.Name;
                 model.CustomerPhone = user.PhoneNumber;
+                model.Address = user.Address ?? string.Empty;
             }
         }
 
@@ -85,18 +86,25 @@ public class BookingController(
     }
 
     [HttpGet]
-    [Authorize]
-    public IActionResult Lookup()
+    public IActionResult Track()
     {
-        return RedirectToAction("MyBookings");
+        return View();
     }
 
     [HttpPost]
-    [Authorize]
     [ValidateAntiForgeryToken]
-    public IActionResult Lookup(string phoneNumber)
+    public async Task<IActionResult> Lookup(string SearchTerm)
     {
-        return RedirectToAction("MyBookings");
+        if (string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            ModelState.AddModelError("SearchTerm", "Please enter a search term.");
+            return View("Track");
+        }
+
+        var isAdmin = User.IsInRole("Admin");
+        var bookings = await bookingService.SearchBookingsAsync(SearchTerm.Trim(), isAdmin);
+
+        return View("TrackResult", bookings);
     }
 
     [HttpGet]

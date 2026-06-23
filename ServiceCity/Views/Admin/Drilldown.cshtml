@@ -1,4 +1,4 @@
-@model ServiceCity.Models.AdminDashboardViewModel
+@model ServiceCity.Services.DTOs.AdminDashboardDto
 @{
     ViewData["Title"] = "Bookings";
 
@@ -30,30 +30,22 @@
 
 <a asp-action="Dashboard" class="text-muted text-decoration-none small">← Back to Dashboard</a>
 
-<div class="d-flex align-items-center gap-2 mt-2 mb-3">
-    <span class="fs-4">@statusIcons[currentStatus]</span>
-    <h2 class="h4 fw-bold mb-0">@currentStatus</h2>
-    <span class="badge rounded-pill" style="background:@style.bg; color:@style.text;">@count</span>
+<div class="page-header mt-2">
+    <h2 class="page-title">@statusIcons[currentStatus] @currentStatus</h2>
+    <span class="badge rounded-pill page-count" style="background:@style.bg; color:@style.text;">@count</span>
+    <form asp-action="Drilldown" method="get" class="page-search">
+        <input type="hidden" name="status" value="@Model.StatusFilter" />
+        <div class="input-group input-group-sm">
+            <input type="text" name="search" value="@Model.Search" class="form-control"
+                   placeholder="Search phone, ref, name…" />
+            <button type="submit" class="btn btn-primary">Search</button>
+            @if (!string.IsNullOrWhiteSpace(Model.Search))
+            {
+                <a asp-action="Drilldown" asp-route-status="@Model.StatusFilter" class="btn btn-outline-secondary">Clear</a>
+            }
+        </div>
+    </form>
 </div>
-
-<form asp-action="Drilldown" method="get" class="mb-3">
-    <input type="hidden" name="status" value="@Model.StatusFilter" />
-    <div class="row g-2 align-items-center">
-        <div class="col-md-6">
-            <input type="text" name="search" value="@Model.Search" class="form-control form-control-sm"
-                   placeholder="Search by phone, reference, or name…" />
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-sm btn-primary">Search</button>
-        </div>
-        @if (!string.IsNullOrWhiteSpace(Model.Search))
-        {
-            <div class="col-auto">
-                <a asp-action="Drilldown" asp-route-status="@Model.StatusFilter" class="btn btn-sm btn-outline-secondary">Clear</a>
-            </div>
-        }
-    </div>
-</form>
 
 @{
     var hasBookings = Model.GroupedBookings.TryGetValue(currentStatus, out var bookings) && bookings!.Any();
@@ -76,7 +68,7 @@
                             <h5 class="card-title fw-bold mb-1">@booking.CustomerName</h5>
                             <div class="d-flex align-items-center gap-2 mb-2">
                                 <span class="badge rounded-pill" style="background:@style.bg; color:@style.text;">@booking.Status</span>
-                                <span class="text-muted small">@booking.ServiceCategory.Name</span>
+                                <span class="text-muted small">@booking.ServiceCategoryName</span>
                             </div>
                             <div class="d-flex gap-3 text-muted small">
                                 <span>📅 @booking.PreferredDate.ToLocalTime().ToString("dd/MM")</span>

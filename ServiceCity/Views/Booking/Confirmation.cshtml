@@ -1,20 +1,95 @@
-@model ServiceCity.Core.Entities.Booking
+@model ServiceCity.Services.DTOs.BookingDto
 @{
     ViewData["Title"] = "Booking Confirmed";
 }
 
-<div class="card">
-    <div class="card-body">
-        <h2 class="h4">Booking Confirmed</h2>
-        <p>Your booking has been received. Please keep your reference number for tracking.</p>
-        
-        <div class="alert alert-success">
-            <strong>Reference Number:</strong> @Model.ReferenceNumber
-        </div>
+<div class="page-header">
+    <h2 class="page-title">Booking Confirmed</h2>
+</div>
 
-        <p><strong>Service:</strong> @Model.ServiceCategory.Name</p>
-        <p><strong>Preferred Date:</strong> @Model.PreferredDate.ToLocalTime().ToString("dd/MM/yyyy")</p>
-        
-        <a asp-action="Status" asp-route-referenceNumber="@Model.ReferenceNumber" class="btn btn-primary">Check Status</a>
+<!-- Success Banner -->
+<div class="card border-0 shadow-sm mb-4" style="background:#d4edda;">
+    <div class="card-body text-center py-4">
+        <div class="display-4 mb-2">✅</div>
+        <h3 class="h4 fw-bold mb-1" style="color:#155724;">Booking Submitted</h3>
+        <p class="mb-2" style="color:#155724; opacity:0.8;">Your request has been received</p>
+        <span class="badge bg-white text-dark fs-6 px-3 py-2 rounded-pill shadow-sm">@Model.ReferenceNumber</span>
     </div>
+</div>
+
+<!-- Detail Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="text-muted small text-uppercase fw-bold mb-3">Service Details</h6>
+                <p class="fw-bold mb-1">@(Model.ServiceCategoryName switch
+                {
+                    "Repair" => "🔧 ",
+                    "Maintenance" => "🧹 ",
+                    "Installation" => "📦 ",
+                    "Gas Refill" => "❄️ ",
+                    _ => ""
+                })@Model.ServiceCategoryName</p>
+                <p class="text-muted mb-1">📅 @Model.PreferredDate.ToLocalTime().ToString("dd/MM/yyyy") · 🕐 @Model.PreferredTimeSlot</p>
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <p class="text-muted mb-1">📝 @Model.Description</p>
+                }
+                <p class="text-muted small mb-0">Created @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h6 class="text-muted small text-uppercase fw-bold mb-3">Your Information</h6>
+                <p class="fw-bold fs-5 mb-1">@Model.CustomerName</p>
+                <p class="text-muted mb-1">📞 @Model.CustomerPhone</p>
+                <p class="text-muted mb-0">📍 @Model.Address</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Timeline -->
+@if (Model.Notifications.Any())
+{
+    <h6 class="text-muted small text-uppercase fw-bold mb-3">Status Timeline</h6>
+    <div class="card mb-4">
+        <div class="card-body">
+            @foreach (var n in Model.Notifications.OrderByDescending(n => n.CreatedAt))
+            {
+                var dotColor = n.StatusTo switch
+                {
+                    ServiceCity.Core.Enums.BookingStatus.Pending => "#ffc107",
+                    ServiceCity.Core.Enums.BookingStatus.Accepted => "#1877F2",
+                    ServiceCity.Core.Enums.BookingStatus.InProgress => "#fd7e14",
+                    ServiceCity.Core.Enums.BookingStatus.Completed => "#28a745",
+                    ServiceCity.Core.Enums.BookingStatus.Declined => "#dc3545",
+                    _ => "#6c757d"
+                };
+                var isLast = n == Model.Notifications.OrderByDescending(x => x.CreatedAt).Last();
+                <div class="d-flex @(isLast ? "" : "mb-3")">
+                    <div class="me-3 d-flex flex-column align-items-center">
+                        <div class="rounded-circle" style="width:12px; height:12px; background:@dotColor;"></div>
+                        @if (!isLast)
+                        {
+                            <div class="vr flex-grow-1 mt-1"></div>
+                        }
+                    </div>
+                    <div>
+                        <p class="mb-0 small">@n.Message</p>
+                        <small class="text-muted">@n.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy hh:mm tt")</small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<!-- CTA -->
+<div class="text-center py-3">
+    <a asp-action="Status" asp-route-referenceNumber="@Model.ReferenceNumber" class="btn btn-primary px-4 me-2">Check Status</a>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary px-4">Back to Home</a>
 </div>

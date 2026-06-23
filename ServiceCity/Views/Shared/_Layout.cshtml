@@ -11,7 +11,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-md navbar-dark sticky-top">
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top">
             <div class="container">
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index">🔧 ServiceCity</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
@@ -26,10 +26,13 @@
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="nav-item">
+                            <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Bookings</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" asp-controller="Admin" asp-action="Customers">Customers</a>
                         </li>
                     }
-                    else
+                    else if (User.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="bookDropdown" role="button"
@@ -43,9 +46,6 @@
                                 <li><a class="dropdown-item" asp-controller="Booking" asp-action="Create" asp-route-serviceCategoryId="4">❄️ Gas Refill</a></li>
                             </ul>
                         </li>
-                    }
-                    @if (User.Identity?.IsAuthenticated == true && !User.IsInRole("Admin"))
-                    {
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Booking" asp-action="MyBookings">My Bookings</a>
                         </li>

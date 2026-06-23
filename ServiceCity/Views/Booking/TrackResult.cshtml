@@ -1,13 +1,17 @@
-@model List<ServiceCity.Core.Entities.Booking>
+@model List<ServiceCity.Services.DTOs.BookingListItemDto>
 @{
-    ViewData["Title"] = "Your Bookings";
+    ViewData["Title"] = "Search Results";
 }
 
-<h2 class="h4 mb-4">Your Bookings</h2>
+<div class="page-header">
+    <h2 class="page-title">Search Results</h2>
+    <span class="badge bg-primary page-count">@Model.Count found</span>
+    <a asp-action="Track" class="btn btn-outline-secondary btn-sm page-search">New Search</a>
+</div>
 
 @if (Model == null || !Model.Any())
 {
-    <div class="alert alert-info">No bookings found for this phone number.</div>
+    <div class="alert alert-info">No bookings found matching your search.</div>
 }
 else
 {
@@ -16,6 +20,7 @@ else
         <thead>
             <tr>
                 <th>Reference</th>
+                <th>Customer</th>
                 <th>Service</th>
                 <th>Status</th>
                 <th>Date</th>
@@ -27,7 +32,8 @@ else
             {
                 <tr>
                     <td>@booking.ReferenceNumber</td>
-                    <td>@booking.ServiceCategory.Name</td>
+                    <td>@booking.CustomerName</td>
+                    <td>@booking.ServiceCategoryName</td>
                     <td>@booking.Status</td>
                     <td>@booking.PreferredDate.ToLocalTime().ToString("dd/MM/yyyy")</td>
                     <td><a asp-action="Status" asp-route-referenceNumber="@booking.ReferenceNumber" class="btn btn-sm btn-outline-primary">View</a></td>

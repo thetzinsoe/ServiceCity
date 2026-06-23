@@ -39,6 +39,8 @@ See: .planning/PROJECT.md (updated 2026-06-16)
 
 ## Recent Activity
 
+- 2026-06-23: UI cleanup — unified page headers, broader search (name/phone/address), removed redundant Track Booking for customers, consistent style across app
+- 2026-06-23: Bug fix session — 10 critical fixes (navbar sticky, booking crash, type mismatches across all admin views, address auto-fill, CSP, Settings back link)
 - 2026-06-21: Phase 8 complete — Booking Experience Polish (2 plans, 5 files, autofill + dashboard overhaul)
 - 2026-06-21: Phase 08 plan 01 complete — Booking Form Autofill (pre-fill name/phone/address from User entity)
 - 2026-06-20: Phase 7 complete — Customer Registration & Personalized Experience (3 waves, 6 tasks, 7 commits)
@@ -77,6 +79,48 @@ See memory: `ui-design-guidelines.md` — color palette (#FFFFFF, #1877F2, #F0F2
 
 ## Session
 
-**Last session:** 2026-06-21T00:00:00.000Z
-**Stopped at:** Phase 08 complete — all v1.1 phases done
+**Last session:** 2026-06-23T00:00:00.000Z
+**Stopped at:** Confirmation page redesign + visitor nav cleanup
 **Next action:** Commit changes, then decide on next milestone or wrap up
+
+## Bug Fixes — 2026-06-23 (Session 1)
+
+| # | Issue | Root Cause | Fix |
+|---|-------|-----------|-----|
+| 1 | Sticky menu didn't stick | `sticky-top` unreliable with page layout | Changed to `fixed-top` + body padding-top |
+| 2 | Booking creation crash | `GenerateReferenceNumber` wrote 10 chars into `char[8]` + only 8 random bytes | Fixed array size and byte count to 10 |
+| 3 | Address not auto-filled | Controller pre-filled name/phone but not address | Added `model.Address = user.Address` |
+| 4 | My Bookings page crash | `@model List<Booking>` but controller returns `List<BookingListItemDto>` | Changed model type + property access |
+| 5 | Track Booking validation | `[Phone]` attribute may reject Myanmar format | Removed `[Phone]`, rely on server-side validation |
+| 6 | Admin Dashboard/Drilldown crash | Views used `Booking` entities but controllers return DTOs | Changed all admin views to use correct DTO types |
+| 7 | Admin Details crash | `@model Booking` but controller returns `BookingDetailDto` | Changed model + `ServiceCategory.Name` → `ServiceCategoryName` |
+| 8 | Admin Customers/CustomerDetail crash | Same type mismatch pattern | Changed to `CustomerListItemDto` / `BookingListItemDto` |
+| 9 | Settings back link | Hardcoded to Admin Dashboard for all users | Made conditional based on user role |
+| 10 | htmx CDN blocked by CSP | `script-src 'self'` blocks unpkg.com | Added `https://unpkg.com` to CSP script-src |
+
+## UI Cleanup — 2026-06-23 (Session 2)
+
+| # | Change | Detail |
+|---|--------|--------|
+| 1 | Removed Track Booking for customers | Authenticated non-admin users have "My Bookings" — Track Booking only shows for guests + admin |
+| 2 | Unified page header style | All pages use `.page-header` CSS class: title + count badge + search bar in one row |
+| 3 | Admin search includes address | `AdminService.QueryBookings` now searches address field; `SearchBookingsAsync` added to BookingService |
+| 4 | Track Booking broader search | Admin can search by name, phone, address, reference; guests search by phone/reference |
+| 5 | TrackResult shows customer name | Added Customer Name column to search results table |
+| 6 | Consistent headers across app | Dashboard, Drilldown, Customers, MyBookings, Track, CustomerDetail all use same `.page-header` pattern |
+
+## Bug Fix + Nav Cleanup — 2026-06-23 (Session 3)
+
+| # | Issue | Fix |
+|---|-------|-----|
+| 1 | `varchar(12)` overflow on booking create | Reverted reference number to 8 chars (`SC-XXXXXXXX` = 11 chars, fits varchar(12)) |
+| 2 | Navigation cleanup per role | **Visitor**: Home only (no service/track). **Customer**: Home + Book a Service + My Bookings. **Admin**: Home + Bookings + Customers |
+| 3 | Duplicate EF Core using directive | Removed duplicate `using Microsoft.EntityFrameworkCore` in BookingService |
+| 4 | EF Core version conflict in Docker | Added `Npgsql.EntityFrameworkCore.PostgreSQL` to Services csproj to align transitive deps |
+
+## UI Update — 2026-06-23 (Session 4)
+
+| # | Change | Detail |
+|---|--------|--------|
+| 1 | Removed Track Booking from visitors | Visitors only see Home + Register/Sign In — no booking features until they register |
+| 2 | Confirmation page redesigned | Matches Status page style: success banner, service + info detail cards, timeline, CTA buttons |

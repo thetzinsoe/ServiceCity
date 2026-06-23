@@ -13,7 +13,6 @@ public class CreateBookingRequest
     public string CustomerName { get; set; } = string.Empty;
 
     [Required]
-    [Phone]
     [StringLength(20)]
     public string CustomerPhone { get; set; } = string.Empty;
 
@@ -49,7 +48,6 @@ public class RegisterRequest
     public string Name { get; set; } = string.Empty;
 
     [Required]
-    [Phone]
     [StringLength(20)]
     public string PhoneNumber { get; set; } = string.Empty;
 

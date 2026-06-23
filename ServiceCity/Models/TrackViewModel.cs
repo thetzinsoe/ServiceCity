@@ -4,7 +4,6 @@ namespace ServiceCity.Models;
 
 public class TrackViewModel
 {
-    [Required]
-    [Phone]
-    public string PhoneNumber { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Search term is required.")]
+    public string SearchTerm { get; set; } = string.Empty;
 }

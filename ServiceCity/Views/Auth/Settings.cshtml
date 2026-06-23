@@ -1,4 +1,4 @@
-@model ServiceCity.Models.SettingsViewModel
+@model SettingsRequest
 @{
     ViewData["Title"] = "Settings";
 }
@@ -35,7 +35,14 @@
         </div>
 
         <div class="text-center mt-3">
-            <a asp-controller="Admin" asp-action="Dashboard" class="text-muted small">← Back to Bookings</a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Admin" asp-action="Dashboard" class="text-muted small">← Back to Dashboard</a>
+            }
+            else
+            {
+                <a asp-controller="Home" asp-action="Index" class="text-muted small">← Back to Home</a>
+            }
         </div>
     </div>
 </div>

@@ -8,35 +8,32 @@
 
 ## 📱 Screenshots
 
-![ServiceCity Home](screenshots/01-home.png)
-*Home page — browse services, book a service*
+![Booking Confirmation](screenshots/04-booking-confirm.png)
+*Booking confirmed — customer sees reference number and status*
 
-![Register](screenshots/02-register.png)
-*Customer registration with phone number*
+![Customer Detail](screenshots/05-customer-detail.png)
+*Admin — view customer details and booking history*
 
-![Sign In](screenshots/03-signin.png)
-*Phone number + password sign in*
+![Customer List](screenshots/06-customer-list.png)
+*Admin — browse and manage all customers*
 
-![Admin Dashboard](screenshots/04-admin-dashboard.png)
-*Admin dashboard — manage bookings by status*
+![Admin Home](screenshots/07-admin-home.png)
+*Admin home page — overview and navigation*
 
-![Booking Confirmation](screenshots/05-confirmation.png)
-*Booking confirmed with reference number*
+![Booking Detail](screenshots/08-booking-detail.png)
+*Admin — booking detail with actions*
 
-![Status Timeline](screenshots/06-status-timeline.png)
-*Track booking status with visual timeline*
+![Admin Customer Detail](screenshots/09-admin-customer-detail.png)
+*Admin — customer detail view*
 
-![Error 404](screenshots/07-404.png)
-*404 — page not found, with helpful navigation*
+![Register Page](screenshots/10-register-page.png)
+*Customer registration page*
 
-![Error 403](screenshots/08-403.png)
-*403 — access denied, sign-in prompt*
+![Sign In Page](screenshots/11-signin-page.png)
+*Sign in page*
 
-![Error 500](screenshots/09-500.png)
-*500 — server error, request ID for debugging*
-
-![Error 503](screenshots/10-503.png)
-*503 — service unavailable, try again later*
+![Visitor View](screenshots/12-visitor-view.png)
+*Visitor/guest view of the platform*
 
 ---
 
@@ -45,12 +42,13 @@
 | Feature | Description |
 |---------|-------------|
 | 📋 **Book a Service** | Select category (Repair, Maintenance, Installation, Gas Refill), fill form, pick date/time — get a unique reference number |
-| 📍 **Track Status** | Visual timeline showing booking progress: Pending → Accepted → In Progress → Completed |
-| 👤 **Customer Registration** | Sign up with phone number, auto-fill booking form, manage all bookings from one place |
-| 📊 **Admin Dashboard** | 5 status summary cards with counts, per-status drill-down pages, search & filter |
+| 📍 **Track Booking** | Search by phone, name, address, or reference number — guests can look up bookings without an account |
+| 👤 **My Bookings** | Authenticated customers see all their bookings in one place with status badges and timeline |
+| 📊 **Admin Dashboard** | 5 status summary cards with counts, per-status drill-down pages, unified search across all fields |
 | ✅ **Admin Actions** | Accept with estimated arrival time, decline with reason, mark in-progress/completed |
 | 🔔 **In-App Notifications** | Status updates appear on the customer's booking timeline in real-time |
 | 📱 **Mobile-First** | Responsive design built for Myanmar's phone-dominant user base |
+| 🎨 **Unified UI** | Consistent page headers (title + count + search) across all admin and customer pages |
 
 ---
 
@@ -169,10 +167,11 @@ Customer                    System                      Admin
 ## 🏗 Architecture
 
 - **MVC Pattern** — Controllers handle requests, Views render HTML, Models carry data
-- **Service Layer** — Business logic in controllers (thin service layer for v1)
+- **Service Layer** — Business logic in service classes, thin controllers
 - **EF Core** — Code-first migrations, PostgreSQL via Npgsql
 - **Session Auth** — Phone + name based, no email/password dependency
 - **In-App Notifications** — Status/message model stored in PostgreSQL
+- **Unified Search** — Search across phone, name, address, and reference number (admin gets full access, guests search by phone/reference)
 
 ---
 

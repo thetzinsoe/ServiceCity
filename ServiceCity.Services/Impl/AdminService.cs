@@ -158,7 +158,8 @@ public class AdminService(
                 b.ReferenceNumber.Contains(term) ||
                 b.CustomerPhone.Contains(term) ||
                 (b.CustomerPhoneNormalized != null && b.CustomerPhoneNormalized.Contains(term)) ||
-                b.CustomerName.Contains(term));
+                b.CustomerName.Contains(term) ||
+                b.Address.Contains(term));
         }
 
         return await query.OrderByDescending(b => b.CreatedAt).ToListAsync();

@@ -1,11 +1,11 @@
-@model List<ServiceCity.Core.Entities.Booking>
+@model List<ServiceCity.Services.DTOs.BookingListItemDto>
 @{
     ViewData["Title"] = "My Bookings";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="h4 fw-bold mb-0">My Bookings</h2>
-    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-sm">Book a Service</a>
+<div class="page-header">
+    <h2 class="page-title">My Bookings</h2>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-sm page-search">Book a Service</a>
 </div>
 
 @if (!Model.Any())
@@ -49,7 +49,7 @@ else
                     <div class="card booking-card h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title fw-bold mb-0">@booking.ServiceCategory?.Name</h5>
+                                <h5 class="card-title fw-bold mb-0">@booking.ServiceCategoryName</h5>
                                 <span class="badge rounded-pill" style="background:@badgeBg; color:@badgeText;">@icon @booking.Status</span>
                             </div>
                             <div class="d-flex gap-3 text-muted small mb-1">

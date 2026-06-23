@@ -24,7 +24,7 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
             .HasConversion<int>();
 
         builder.HasOne(n => n.Booking)
-            .WithMany()
+            .WithMany(b => b.Notifications)
             .HasForeignKey(n => n.BookingId)
             .OnDelete(DeleteBehavior.Cascade);
 

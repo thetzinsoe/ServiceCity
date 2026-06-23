@@ -122,9 +122,6 @@ namespace ServiceCity.Data.Migrations
                     b.Property<int>("BookingId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("BookingId1")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -143,8 +140,6 @@ namespace ServiceCity.Data.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookingId1");
 
                     b.HasIndex("BookingId", "CreatedAt")
                         .IsDescending(false, true);
@@ -222,8 +217,17 @@ namespace ServiceCity.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("FailedLoginAttempts")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastFailedLoginAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LockedUntil")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -280,9 +284,11 @@ namespace ServiceCity.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ServiceCity.Core.Entities.Booking", null)
+                    b.HasOne("ServiceCity.Core.Entities.Booking", "Booking")
                         .WithMany("Notifications")
-                        .HasForeignKey("BookingId1");
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Booking");
                 });

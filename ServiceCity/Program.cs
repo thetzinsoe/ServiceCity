@@ -103,7 +103,7 @@ app.Use(async (context, next) =>
     headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
     headers["X-Permitted-Cross-Domain-Policies"] = "none";
     headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
-    headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'";
+    headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; form-action 'self'; frame-ancestors 'none'";
 
     await next();
 });

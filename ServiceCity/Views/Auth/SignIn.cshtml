@@ -1,4 +1,4 @@
-@model SignInViewModel
+@model SignInRequest
 @{
     ViewData["Title"] = "Sign In";
 }
@@ -26,9 +26,9 @@
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                     <div class="mb-3">
-                        <label asp-for="Username" class="form-label">Username</label>
-                        <input asp-for="Username" class="form-control" />
-                        <span asp-validation-for="Username" class="text-danger"></span>
+                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="09xxxxxxxxx" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">

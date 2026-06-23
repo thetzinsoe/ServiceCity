@@ -1,19 +1,22 @@
 @model ServiceCity.Models.TrackViewModel
 @{
     ViewData["Title"] = "Track Booking";
+    var isAdmin = User.IsInRole("Admin");
+    var placeholder = isAdmin ? "Phone, name, address, or reference…" : "Phone number or reference…";
 }
 
-<h2 class="h4 mb-4">Track Your Booking</h2>
+<div class="page-header">
+    <h2 class="page-title">Track Booking</h2>
+</div>
 
 <form asp-action="Lookup" method="post" class="row g-3">
     @Html.AntiForgeryToken()
-    <div class="col-md-6">
-        <label asp-for="PhoneNumber" class="form-label">Enter your phone number</label>
-        <input asp-for="PhoneNumber" class="form-control" required placeholder="09xxxxxxxxx" />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    <div class="col-md-8">
+        <input asp-for="SearchTerm" class="form-control" required placeholder="@placeholder" />
+        <span asp-validation-for="SearchTerm" class="text-danger"></span>
     </div>
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">Find Booking</button>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Search</button>
     </div>
 </form>
 

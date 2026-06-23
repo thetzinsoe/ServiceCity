@@ -1,4 +1,4 @@
-@model ServiceCity.Core.Entities.Booking
+@model ServiceCity.Services.DTOs.BookingDetailDto
 @{
     ViewData["Title"] = Model.ReferenceNumber;
 
@@ -39,14 +39,14 @@
         <div class="card h-100">
             <div class="card-body">
                 <h6 class="text-muted small text-uppercase fw-bold mb-3">Service</h6>
-                <p class="fw-bold mb-1">@(Model.ServiceCategory.Name switch
+                <p class="fw-bold mb-1">@(Model.ServiceCategoryName switch
                 {
                     "Repair" => "🔧 ",
                     "Maintenance" => "🧹 ",
                     "Installation" => "📦 ",
                     "Gas Refill" => "❄️ ",
                     _ => ""
-                })@Model.ServiceCategory.Name</p>
+                })@Model.ServiceCategoryName</p>
                 <p class="text-muted mb-1">📅 @Model.PreferredDate.ToLocalTime().ToString("dd/MM/yyyy") · 🕐 @Model.PreferredTimeSlot</p>
                 @if (!string.IsNullOrEmpty(Model.Description))
                 {

@@ -10,6 +10,8 @@ public interface IBookingService
     Task<BookingDto?> GetConfirmationAsync(string referenceNumber);
     Task<BookingDto?> GetStatusAsync(string referenceNumber);
     Task<List<BookingListItemDto>> GetMyBookingsAsync(int userId);
+    Task<List<BookingListItemDto>> GetBookingsByPhoneAsync(string phoneNumber);
+    Task<List<BookingListItemDto>> SearchBookingsAsync(string searchTerm, bool includeAddress);
 }
 
 public interface IAuthService

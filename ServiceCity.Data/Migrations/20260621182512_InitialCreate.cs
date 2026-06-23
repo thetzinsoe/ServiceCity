@@ -38,8 +38,14 @@ namespace ServiceCity.Data.Migrations
                     Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     PhoneNumberNormalized = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: false),
+                    Username = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
                     IsAdmin = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    FailedLoginAttempts = table.Column<int>(type: "integer", nullable: false),
+                    LockedUntil = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastFailedLoginAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -53,15 +59,21 @@ namespace ServiceCity.Data.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ReferenceNumber = table.Column<string>(type: "character varying(12)", maxLength: 12, nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
                     ServiceCategoryId = table.Column<int>(type: "integer", nullable: false),
+                    CustomerName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    CustomerPhone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    CustomerPhoneNormalized = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     Address = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     Description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     PreferredDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PreferredTimeSlot = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    EstimatedArrivalTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DeclineReason = table.Column<string>(type: "text", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IdempotencyKey = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -76,8 +88,7 @@ namespace ServiceCity.Data.Migrations
                         name: "FK_Bookings_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -116,6 +127,17 @@ namespace ServiceCity.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bookings_CustomerPhoneNormalized",
+                table: "Bookings",
+                column: "CustomerPhoneNormalized");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_IdempotencyKey",
+                table: "Bookings",
+                column: "IdempotencyKey",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Bookings_ReferenceNumber",
                 table: "Bookings",
                 column: "ReferenceNumber",
@@ -133,9 +155,9 @@ namespace ServiceCity.Data.Migrations
                 descending: new[] { false, true });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_UserId_Status",
+                name: "IX_Bookings_UserId",
                 table: "Bookings",
-                columns: new[] { "UserId", "Status" });
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_BookingId_CreatedAt",

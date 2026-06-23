@@ -21,6 +21,7 @@ html {
 
 body {
   margin-bottom: 60px;
+  padding-top: 56px;
   background: var(--sc-gray-bg);
   color: var(--sc-text);
 }
@@ -236,4 +237,39 @@ body {
 /* ── Timeline ── */
 .timeline-item:last-child .vr {
   display: none !important;
+}
+
+/* ── Unified page header ── */
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.page-header .page-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  white-space: nowrap;
+}
+.page-header .page-count {
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.page-header .page-search {
+  margin-left: auto;
+}
+.page-header .page-search .form-control {
+  min-width: 200px;
+}
+@media (max-width: 575.98px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .page-header .page-search {
+    margin-left: 0;
+  }
 }

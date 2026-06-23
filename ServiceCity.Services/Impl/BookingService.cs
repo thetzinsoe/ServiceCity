@@ -1,7 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using ServiceCity.Core.Entities;
 using ServiceCity.Core.Enums;
 using ServiceCity.Data;
@@ -40,7 +39,7 @@ public class BookingService(
             ServiceCategoryId = request.ServiceCategoryId,
             CustomerName = request.CustomerName,
             CustomerPhone = request.CustomerPhone,
-            CustomerPhoneNormalized = normalized,
+            CustomerPhoneNormalized = normalized!,
             Address = request.Address,
             Description = request.Description,
             PreferredDate = DateTime.SpecifyKind(request.PreferredDate, DateTimeKind.Utc),
@@ -90,6 +89,42 @@ public class BookingService(
         return bookings.Select(MapToListItem).ToList();
     }
 
+    public async Task<List<BookingListItemDto>> GetBookingsByPhoneAsync(string phoneNumber)
+    {
+        var (isValid, normalized, _) = phoneValidator.Validate(phoneNumber);
+        if (!isValid) return [];
+
+        var bookings = await bookingRepo.Query()
+            .Include(b => b.ServiceCategory)
+            .Where(b => b.CustomerPhoneNormalized == normalized)
+            .OrderByDescending(b => b.CreatedAt)
+            .ToListAsync();
+
+        return bookings.Select(MapToListItem).ToList();
+    }
+
+    public async Task<List<BookingListItemDto>> SearchBookingsAsync(string searchTerm, bool includeAddress)
+    {
+        IQueryable<Booking> query = bookingRepo.Query().Include(b => b.ServiceCategory);
+
+        // Try phone normalization
+        var (isValid, normalized, _) = phoneValidator.Validate(searchTerm);
+
+        query = query.Where(b =>
+            b.ReferenceNumber.Contains(searchTerm) ||
+            b.CustomerName.Contains(searchTerm) ||
+            b.CustomerPhone.Contains(searchTerm) ||
+            (isValid && b.CustomerPhoneNormalized == normalized) ||
+            (includeAddress && b.Address.Contains(searchTerm))
+        );
+
+        var bookings = await query
+            .OrderByDescending(b => b.CreatedAt)
+            .ToListAsync();
+
+        return bookings.Select(MapToListItem).ToList();
+    }
+
     private static BookingDto MapToDto(Booking b, List<Notification>? notifications = null) => new()
     {
         Id = b.Id,
@@ -130,7 +165,7 @@ public class BookingService(
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         var bytes = RandomNumberGenerator.GetBytes(8);
         var suffix = new char[8];
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 8; i++)
             suffix[i] = chars[bytes[i] % chars.Length];
         return $"SC-{new string(suffix)}";
     }
