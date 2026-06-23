@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "description": "Up-to-date documentation for libraries and frameworks (React, Next.js, .NET, Bootstrap, etc.)"
+    },
+    "codebase-memory-mcp": {
+      "command": "/home/thetzinsoe/.local/bin/codebase-memory-mcp",
+      "description": "Codebase knowledge graph — index, search, and trace code relationships"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "description": "Browser automation for testing and screenshots"
+    },
+    "microsoft-docs": {
+      "description": "Official Microsoft documentation for .NET, ASP.NET Core, Azure, and C# APIs"
+    }
+  }
+}
