@@ -207,10 +207,11 @@
   "worktree": {
     "baseRef": "head"
   },
-  "mcp":{},
+  "mcp": {},
   "enabledMcpjsonServers": [
     "context7",
     "codebase-memory-mcp",
     "playwright"
-  ]
+  ],
+  "mcpServers": {}
 }
