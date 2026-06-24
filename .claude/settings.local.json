@@ -1,4 +1,42 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(npx gsd-core *)",
+      "Read(.planning/*)",
+      "Write(.planning/*)",
+      "Read(STATE.md)",
+      "Write(STATE.md)",
+      "Bash(curl -s http://localhost:5124/Auth/Setup)",
+      "Bash(sudo mkdir -p /opt/google/chrome)",
+      "Bash(mkdir -p /tmp/google-chrome)",
+      "Bash(ln -sf ~/.cache/ms-playwright/chromium-1228/chrome-linux64/chrome /tmp/google-chrome/chrome)",
+      "Bash(export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/tmp/google-chrome/chrome)",
+      "mcp__plugin_playwright_playwright__browser_run_code_unsafe",
+      "Bash(sudo ln -sf ~/.cache/ms-playwright/chromium-1228/chrome-linux64/chrome /opt/google/chrome/chrome)",
+      "Bash(curl -s http://localhost:5124/)",
+      "Bash(curl *)",
+      "Bash(docker compose logs *)",
+      "Bash(docker exec servicecity-db *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'docs: add screenshots to README at top section *)",
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git stash *)",
+      "Bash(npm install *)",
+      "Bash(git commit -m 'docs: replace track screenshot, add admin dashboard, confirmation, and status timeline *)",
+      "Bash(dotnet build *)",
+      "Bash(docker compose *)",
+      "Bash(git commit -m 'fix: varchar\\(12\\) overflow in reference number + add error page screenshot *)",
+      "Bash(git commit -m 'feat: beautiful error pages for 404, 403, 500, 503 *)",
+      "mcp__codebase-memory-mcp__index_repository",
+      "mcp__codebase-memory-mcp__get_graph_schema"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(.secrets)"
+    ]
+  },
   "hooks": {
     "SessionStart": [
       {
@@ -169,18 +207,10 @@
   "worktree": {
     "baseRef": "head"
   },
-  "permissions": {
-    "allow": [
-      "Bash(npx gsd-core *)",
-      "Read(.planning/*)",
-      "Write(.planning/*)",
-      "Read(STATE.md)",
-      "Write(STATE.md)"
-    ],
-    "deny": [
-      "Read(.env)",
-      "Read(.env.*)",
-      "Read(.secrets)"
-    ]
-  }
+  "mcp":{},
+  "enabledMcpjsonServers": [
+    "context7",
+    "codebase-memory-mcp",
+    "playwright"
+  ]
 }
