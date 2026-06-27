@@ -9,10 +9,20 @@ using ServiceCity.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database
+// Database — supports Railway's DATABASE_URL or standard ConnectionStrings__DefaultConnection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (string.IsNullOrEmpty(connectionString))
-    throw new InvalidOperationException("Connection string 'DefaultConnection' is not configured. Add it via User Secrets (dev) or environment variable (prod).");
+
+// Railway provides DATABASE_URL (e.g. postgresql://user:pass@host:port/db)
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (!string.IsNullOrEmpty(databaseUrl))
+{
+    // Convert standard postgres:// URL to Npgsql connection string
+    connectionString = ConvertPostgresUrlToConnectionString(databaseUrl);
+}
+else if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Connection string not configured. Set DATABASE_URL (Railway) or ConnectionStrings__DefaultConnection.");
+}
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -124,14 +134,11 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseRateLimiter();
 
-// Auto-migrate only in development
-if (app.Environment.IsDevelopment())
+// Auto-migrate on startup (creates tables on first deploy)
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        db.Database.Migrate();
-    }
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
 }
 
 app.UseAuthentication();
@@ -145,3 +152,20 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.Run();
+
+// Converts postgres://user:password@host:port/dbname to Npgsql connection string
+static string ConvertPostgresUrlToConnectionString(string url)
+{
+    // Handle both postgres:// and postgresql:// schemes
+    if (url.StartsWith("postgresql://"))
+        url = url.Replace("postgresql://", "postgres://");
+
+    var uri = new Uri(url);
+    var userInfo = uri.UserInfo.Split(':');
+    var username = userInfo.Length > 0 ? Uri.UnescapeDataString(userInfo[0]) : "";
+    var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
+    var database = uri.AbsolutePath.TrimStart('/');
+
+    // Railway Postgres requires SSL
+    return $"Host={uri.Host};Port={uri.Port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+}
